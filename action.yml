@@ -12,7 +12,7 @@ inputs:
   prefix-template:
     description: 'Title prefix template where branch info gets substituted in'
     required: true
-    default: '[%branch%] '
+    default: '[%branch%]'
 branding:
   icon: 'edit-3'
   color: 'green'
