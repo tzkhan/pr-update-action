@@ -18,7 +18,7 @@ async function run() {
     const { pull_request } = github.context.payload;
 
     const branch = pull_request.head.ref.toLowerCase();
-    core.info(`title: ${branch}`);
+    core.info(`branch: ${branch}`);
 
     const matches = branch.match(new RegExp(branchRegex));
     if (!matches) {
@@ -26,22 +26,22 @@ async function run() {
       return;
     }
 
-    const prefix = prefixTemplate.replace(textTokens.branch, matches[0].toUpperCase());
-    core.info(`title: ${prefix}`);
+    const prefix = prefixTemplate.replace(textTokens.branch, matches[0]);
+    core.info(`prefix: ${prefix}`);
 
-    const title = pull_request.title.toLowerCase();
+    const title = pull_request.title;
     core.info(`title: ${title}`);
 
-    if(title.startsWith(prefix)) {
+    if(title.toLowerCase().startsWith(prefix.toLowerCase())) {
       core.info('PR title is prefixed correctly already - no updates made');
       return;
     }
 
-    const newTitle = prefix.concat(title);
+    const newTitle = prefix.toUpperCase().concat(' ', title);
     core.info(`newTitle: ${newTitle}`);
 
     const client = new github.GitHub(token);
-    const patchExists = client.pulls.patch;
+    const patchExists = client.pulls.update;
     core.info(`patchExists: ${patchExists}`);
   }
   catch (error) {
