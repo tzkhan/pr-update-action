@@ -32,8 +32,8 @@ async function run() {
     const title = github.context.payload.pull_request.title;
     core.debug(`title: ${title}`);
 
-    if(title.toLowerCase().startsWith(prefix.toLowerCase())) {
-      core.warn('PR title is prefixed correctly already - no updates made');
+    if (title.toLowerCase().startsWith(prefix.toLowerCase())) {
+      core.warning('PR title is prefixed correctly already - no updates made');
       return;
     }
 
@@ -49,7 +49,7 @@ async function run() {
     });
 
     core.info(`response: ${response.status}`);
-    if(response.status !== 200) {
+    if (response.status !== 200) {
       core.error('Updating the pull request has failed');
     }
   }
