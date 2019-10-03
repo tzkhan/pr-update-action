@@ -8,6 +8,8 @@ async function run() {
     }
 
     const token = core.getInput('repo-token', {required: true});
+    console.log('Where is the console that this logs to?');
+    console.log(`${token}`);
 
     const branchRegex = core.getInput('branch-regex', {required: true});
     core.debug(`branchRegex: ${branchRegex}`);
@@ -26,8 +28,10 @@ async function run() {
       return;
     }
 
+    core.info(`Matched branch text: ${matches[0]}`);
+
     const prefix = prefixTemplate.replace(textTokens.branch, matches[0]);
-    core.info(`Title prefix from matched branch text: ${prefix}`);
+    core.info(`prefix: ${prefix}`);
 
     const title = pull_request.title;
     core.debug(`title: ${title}`);
@@ -42,13 +46,11 @@ async function run() {
 
     const client = new github.GitHub(token);
     const response = await client.pulls.update({
-      title: newTitle
+      owner: github.context.payload.repository.owner,
+      title: newTitle,
     });
 
     core.info(`response: ${response}`);
-
-    console.log('Where is the console that this logs to?');
-    console.log(`${token}`);
   }
   catch (error) {
     core.error(error);
