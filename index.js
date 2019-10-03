@@ -10,15 +10,15 @@ async function run() {
     const token = core.getInput('repo-token', {required: true});
 
     const branchRegex = core.getInput('branch-regex', {required: true});
-    core.info(`branchRegex: ${branchRegex}`);
+    core.debug(`branchRegex: ${branchRegex}`);
 
     const prefixTemplate = core.getInput('prefix-template', {required: true});
-    core.info(`prefixTemplate: ${prefixTemplate}`);
+    core.debug(`prefixTemplate: ${prefixTemplate}`);
 
     const { pull_request } = github.context.payload;
 
     const branch = pull_request.head.ref.toLowerCase();
-    core.info(`branch: ${branch}`);
+    core.debug(`branch: ${branch}`);
 
     const matches = branch.match(new RegExp(branchRegex));
     if (!matches) {
@@ -27,10 +27,10 @@ async function run() {
     }
 
     const prefix = prefixTemplate.replace(textTokens.branch, matches[0]);
-    core.info(`prefix: ${prefix}`);
+    core.info(`Title prefix from matched branch text: ${prefix}`);
 
     const title = pull_request.title;
-    core.info(`title: ${title}`);
+    core.debug(`title: ${title}`);
 
     if(title.toLowerCase().startsWith(prefix.toLowerCase())) {
       core.info('PR title is prefixed correctly already - no updates made');
@@ -38,11 +38,17 @@ async function run() {
     }
 
     const newTitle = prefix.toUpperCase().concat(' ', title);
-    core.info(`newTitle: ${newTitle}`);
+    core.debug(`newTitle: ${newTitle}`);
 
     const client = new github.GitHub(token);
-    const patchExists = client.pulls.update;
-    core.info(`patchExists: ${patchExists}`);
+    const response = await client.pulls.update({
+      title: newTitle
+    });
+
+    core.info(`response: ${response}`);
+
+    console.log('Where is the console that this logs to?');
+    console.log(`${token}`);
   }
   catch (error) {
     core.error(error);
