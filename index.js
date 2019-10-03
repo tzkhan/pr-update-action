@@ -40,11 +40,6 @@ async function run() {
     const newTitle = prefix.toUpperCase().concat(' ', title);
     core.debug(`newTitle: ${newTitle}`);
 
-    core.info(`response: ${github.context.payload.repository.owner.login}`);
-    core.info(`response: ${github.context.repo}`);
-    core.info(`response: ${github.context.repo.owner}`);
-    core.info(`response: ${github.context.repo.repo}`);
-
     const client = new github.GitHub(token);
     const response = await client.pulls.update({
       owner: github.context.repo.owner,
@@ -53,7 +48,10 @@ async function run() {
       title: newTitle,
     });
 
-    core.info(`response: ${response}`);
+    core.info(`response: ${response.status}`);
+    if(response.status !== 200) {
+      core.error('Updating the pull request has failed');
+    }
   }
   catch (error) {
     core.error(error);
