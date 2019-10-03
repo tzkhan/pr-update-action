@@ -9,6 +9,10 @@ inputs:
     description: 'Regex to match branch name'
     required: true
     default: 'PROJECT-\d+'
+  prefix-template:
+    description: 'Title prefix template where branch info gets substituted in'
+    required: true
+    default: '[%branch%] '
 branding:
   icon: 'edit-3'
   color: 'green'
