@@ -5,13 +5,16 @@ async function run() {
   try {
     const token = core.getInput('repo-token', {required: true});
     const branchRegex = core.getInput('branch-regex', {required: true});
-    const removeBranchPrefix = core.getInput('remove-branch-prefix');
+
+    core.info(`branchRegex: ${branchRegex}`);
 
     const client = new github.GitHub(token);
 
-    core.info(`client info: ${client.info}`);
-    core.info(`branchRegex: ${branchRegex}`);
-    core.info(`removeBranchPrefix: ${removeBranchPrefix}`);
+    const title = github.context.payload.pull_request.title.toLowerCase();
+    core.info(`title: ${title}`);
+
+    const branch = github.context.payload.pull_request.head.ref.toLowerCase();
+    core.info(`title: ${branch}`);
   }
   catch (error) {
     core.setFailed(error.message);
