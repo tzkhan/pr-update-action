@@ -1,0 +1,18 @@
+name: 'PR Update GitHub Action'
+description: 'GitHub Action that updates a pull request with information extracted from branch name'
+author: 'Tamim Khan'
+runs:
+  using: 'node12'
+  main: 'index.js'
+inputs:
+  branch-regex:
+    description: 'Branch regex to match'
+    required: true
+    default: '^\[PROJECT-\d*\]\'
+  remove-branch-prefix:
+    description: 'Should prefix be removed from branch name first'
+    required: false
+    default: false
+branding:
+  icon: 'edit-3'
+  color: 'green'

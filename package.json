@@ -1,0 +1,33 @@
+{
+  "name": "pr-update-action",
+  "version": "1.0.0",
+  "description": "PR Update GitHub Action",
+  "main": "index.js",
+  "scripts": {
+    "lint": "eslint index.js",
+    "test": "eslint index.js && jest"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/tzkhan/pr-update-action.git"
+  },
+  "keywords": [
+    "GitHub",
+    "Actions",
+    "PullRequest"
+  ],
+  "author": "Tamim Khan",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/tzkhan/pr-update-action/issues"
+  },
+  "homepage": "https://github.com/tzkhan/pr-update-action/#readme",
+  "dependencies": {
+    "@actions/core": "^1.1.1",
+    "@actions/github": "^1.1.0"
+  },
+  "devDependencies": {
+    "eslint": "^6.3.0",
+    "jest": "^24.9.0"
+  }
+}
