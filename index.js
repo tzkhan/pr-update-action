@@ -43,6 +43,7 @@ async function run() {
     const client = new github.GitHub(token);
     const response = await client.pulls.update({
       owner: github.context.payload.repository.owner,
+      repo: github.context.payload.repository.name,
       pull_number: github.context.payload.pull_request.number,
       title: newTitle,
     });
