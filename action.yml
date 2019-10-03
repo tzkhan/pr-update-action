@@ -6,13 +6,9 @@ runs:
   main: 'index.js'
 inputs:
   branch-regex:
-    description: 'Branch regex to match'
+    description: 'Regex to match branch name'
     required: true
-    default: '^\[PROJECT-\d*\]\'
-  remove-branch-prefix:
-    description: 'Should prefix be removed from branch name first'
-    required: false
-    default: false
+    default: 'PROJECT-\d+'
 branding:
   icon: 'edit-3'
   color: 'green'
