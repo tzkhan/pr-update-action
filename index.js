@@ -40,6 +40,11 @@ async function run() {
     const newTitle = prefix.toUpperCase().concat(' ', title);
     core.debug(`newTitle: ${newTitle}`);
 
+    core.info(`response: ${github.context.payload.repository.full_name}`);
+    core.info(`response: ${github.context.payload.repository.name}`);
+    core.info(`response: ${github.context.payload.repository.owner}`);
+    core.info(`response: ${github.context.payload.repository}`);
+
     const client = new github.GitHub(token);
     const response = await client.pulls.update({
       owner: github.context.payload.repository.owner,
