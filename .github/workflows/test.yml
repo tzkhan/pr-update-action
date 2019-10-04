@@ -1,8 +1,9 @@
-name: "test-local"
-on: [pull_request, push]
+name: "Update Pull Request"
+
+on: pull_request
 
 jobs:
-  test:
+  pr_update_title:
     runs-on: ubuntu-latest
     steps:
     - uses: tzkhan/pr-update-action@master
