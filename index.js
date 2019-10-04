@@ -3,9 +3,7 @@ const github = require('@actions/github');
 
 async function run() {
   try {
-    const textTokens = {
-      branch: '%branch%'
-    }
+    const tokenRegex = new RegExp('%branch%', "g");
 
     const inputs = {
       token: core.getInput('repo-token', {required: true}),
@@ -31,7 +29,7 @@ async function run() {
       pull_number: github.context.payload.pull_request.number,
     }
 
-    const titlePrefix = inputs.titleTemplate.replace(textTokens.branch, matches[0].toUpperCase());
+    const titlePrefix = inputs.titleTemplate.replace(tokenRegex, matches[0].toUpperCase());
     core.debug(`titlePrefix: ${titlePrefix}`);
 
     const title = github.context.payload.pull_request.title;
@@ -44,7 +42,7 @@ async function run() {
       core.warning('PR title is prefixed already - no updates made');
     }
 
-    const bodyPrefix = inputs.bodyTemplate.replace(textTokens.branch, matches[0].toUpperCase());
+    const bodyPrefix = inputs.bodyTemplate.replace(tokenRegex, matches[0].toUpperCase());
     core.debug(`bodyPrefix: ${bodyPrefix}`);
 
     const body = github.context.payload.pull_request.body;
