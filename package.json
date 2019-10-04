@@ -1,6 +1,6 @@
 {
   "name": "pr-update-action",
-  "version": "1.0.0",
+  "version": "0.1.0",
   "description": "PR Update GitHub Action",
   "main": "index.js",
   "scripts": {

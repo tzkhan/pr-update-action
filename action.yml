@@ -5,14 +5,21 @@ runs:
   using: 'node12'
   main: 'index.js'
 inputs:
+  repo-token:
+    description: 'The GITHUB_TOKEN secret'
+    required: true
   branch-regex:
     description: 'Regex to match branch name'
     required: true
     default: 'PROJECT-\d+'
-  prefix-template:
+  title-template:
     description: 'Title prefix template where branch info gets substituted in'
     required: true
     default: '[%branch%]'
+  body-template:
+    description: 'Body prefix template where branch info gets substituted in'
+    required: true
+    default: '[%branch%](https://project.tracking.software/browse/%branch%)'
 branding:
   icon: 'edit-3'
   color: 'green'
