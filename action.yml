@@ -1,4 +1,4 @@
-name: 'PR Update GitHub Action'
+name: 'Pull Request Updater GitHub Action'
 description: 'GitHub Action that updates a pull request with information extracted from branch name'
 author: 'Tamim Khan'
 runs:
@@ -19,7 +19,7 @@ inputs:
   body-template:
     description: 'Body prefix template where branch info gets substituted in'
     required: true
-    default: '[%branch%](https://project.tracking.software/browse/%branch%)'
+    default: '[%branch%](https://url/to/browse/ticket/%branch%)'
 branding:
   icon: 'edit-3'
   color: 'green'
