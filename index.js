@@ -8,11 +8,15 @@ async function run() {
     const inputs = {
       token: core.getInput('repo-token', {required: true}),
       branchRegex: core.getInput('branch-regex', {required: true}),
+      lowercaseBranch: core.getInput('lowercase-branch'),
       titleTemplate: core.getInput('title-template', {required: true}),
+      uppercaseTitle: core.getInput('uppercase-title'),
       bodyTemplate: core.getInput('body-template', {required: true}),
+      uppercaseBody: core.getInput('uppercase-body'),
     }
 
-    const branch = github.context.payload.pull_request.head.ref.toLowerCase();
+    const branchName = github.context.payload.pull_request.head.ref;
+    const branch = lowercaseBranch ? branchName.toLowerCase() : branchName;
     core.debug(`branch: ${branch}`);
 
     const matches = branch.match(new RegExp(inputs.branchRegex));
@@ -21,7 +25,8 @@ async function run() {
       return;
     }
 
-    core.info(`Matched branch text: ${matches[0]}`);
+    const match = (upperCase) => upperCase ? matches[0].toUpperCase() : matches[0];
+    core.info(`Matched branch text: ${match(false)}`);
 
     const request = {
       owner: github.context.repo.owner,
@@ -29,7 +34,7 @@ async function run() {
       pull_number: github.context.payload.pull_request.number,
     }
 
-    const titlePrefix = inputs.titleTemplate.replace(tokenRegex, matches[0].toUpperCase());
+    const titlePrefix = inputs.titleTemplate.replace(tokenRegex, match(uppercaseTitle));
     core.debug(`titlePrefix: ${titlePrefix}`);
 
     const title = github.context.payload.pull_request.title;
@@ -42,7 +47,7 @@ async function run() {
       core.warning('PR title is prefixed already - no updates made');
     }
 
-    const bodyPrefix = inputs.bodyTemplate.replace(tokenRegex, matches[0].toUpperCase());
+    const bodyPrefix = inputs.bodyTemplate.replace(tokenRegex, match(uppercaseBody));
     core.debug(`bodyPrefix: ${bodyPrefix}`);
 
     const body = github.context.payload.pull_request.body;
