@@ -21,10 +21,13 @@ jobs:
       with:
         repo-token: "${{ secrets.GITHUB_TOKEN }}"                   # required - allows the action to make calls to GitHub's rest API
         branch-regex: 'PROJECT-\d+'                                 # required - regex to match text from the head branch name
+        lowercase-branch: true                                      # optional - whether to lowercase branch name before matching
         title-template: '[%branch%]'                                # optional - text template to prefix title
+        uppercase-title: true                                       # optional - whether to uppercase title prefix
         body-template: '[%branch%](https://browse/ticket/%branch%)' # optional - text template to prefix body
+        uppercase-body: true                                        # optional - whether to uppercase body prefix
 ```
 
 `body-template` can be set to a GitHub secret if necessary to avoid leaking sensitive data in the URLs for instance. `body-template: ${{ secrets.PR_BODY_PREFIX_TEMPLATE }}`
 
-_Note: template values must contain the `%branch%` token (can occur multiple times) so that it can be replaced with the matched text from the branch name._
+_**NOTE**: template values must contain the `%branch%` token (can occur multiple times) so that it can be replaced with the matched text from the branch name._
