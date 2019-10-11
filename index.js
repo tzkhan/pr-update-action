@@ -16,7 +16,7 @@ async function run() {
     }
 
     const branchName = github.context.payload.pull_request.head.ref;
-    const branch = lowercaseBranch ? branchName.toLowerCase() : branchName;
+    const branch = inputs.lowercaseBranch ? branchName.toLowerCase() : branchName;
     core.debug(`branch: ${branch}`);
 
     const matches = branch.match(new RegExp(inputs.branchRegex));
@@ -34,7 +34,7 @@ async function run() {
       pull_number: github.context.payload.pull_request.number,
     }
 
-    const titlePrefix = inputs.titleTemplate.replace(tokenRegex, match(uppercaseTitle));
+    const titlePrefix = inputs.titleTemplate.replace(tokenRegex, match(inputs.uppercaseTitle));
     core.debug(`titlePrefix: ${titlePrefix}`);
 
     const title = github.context.payload.pull_request.title;
@@ -47,7 +47,7 @@ async function run() {
       core.warning('PR title is prefixed already - no updates made');
     }
 
-    const bodyPrefix = inputs.bodyTemplate.replace(tokenRegex, match(uppercaseBody));
+    const bodyPrefix = inputs.bodyTemplate.replace(tokenRegex, match(inputs.uppercaseBody));
     core.debug(`bodyPrefix: ${bodyPrefix}`);
 
     const body = github.context.payload.pull_request.body;
