@@ -24,7 +24,7 @@ async function run() {
 
     const branchName = github.context.payload.pull_request.head.ref;
     const branch = inputs.lowercaseBranch ? branchName.toLowerCase() : branchName;
-    core.debug(`branch: ${branch}`);
+    core.info(`branch: ${branch}`);
 
     const matches = branch.match(new RegExp(inputs.branchRegex));
     if (!matches) {
@@ -42,27 +42,29 @@ async function run() {
     }
 
     const titlePrefix = inputs.titleTemplate.replace(tokenRegex, match(inputs.uppercaseTitle));
-    core.debug(`titlePrefix: ${titlePrefix}`);
+    core.info(`titlePrefix: ${titlePrefix}`);
+    core.info(`match title: ${match(inputs.uppercaseTitle)}`);
 
     const title = github.context.payload.pull_request.title;
     const updateTitle = !title.toLowerCase().startsWith(titlePrefix.toLowerCase());
 
     if (updateTitle) {
       request.title = titlePrefix.concat(' ', title);
-      core.debug(`new title: ${request.title}`);
+      core.info(`new title: ${request.title}`);
     } else {
       core.warning('PR title is prefixed already - no updates made');
     }
 
     const bodyPrefix = inputs.bodyTemplate.replace(tokenRegex, match(inputs.uppercaseBody));
-    core.debug(`bodyPrefix: ${bodyPrefix}`);
+    core.info(`bodyPrefix: ${bodyPrefix}`);
+    core.info(`match body: ${match(inputs.uppercaseBody)}`);
 
     const body = github.context.payload.pull_request.body;
     const updateBody = !body.toLowerCase().startsWith(bodyPrefix.toLowerCase());
 
     if (updateBody) {
       request.body = bodyPrefix.concat('\n\n', body);
-      core.debug(`new body: ${request.body}`);
+      core.info(`new body: ${request.body}`);
     } else {
       core.warning('PR body is prefixed already - no updates made');
     }
