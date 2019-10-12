@@ -10,24 +10,14 @@ async function run() {
       branchRegex: core.getInput('branch-regex', {required: true}),
       lowercaseBranch: (core.getInput('lowercase-branch').toLowerCase() === 'true'),
       titleTemplate: core.getInput('title-template', {required: true}),
-      uppercaseTitleStr: core.getInput('uppercase-title').toLowerCase(),
       uppercaseTitle: (core.getInput('uppercase-title').toLowerCase() === 'true'),
       bodyTemplate: core.getInput('body-template', {required: true}),
       uppercaseBody: (core.getInput('uppercase-body').toLowerCase() === 'true'),
     }
 
-    core.info(`branch-regex: ${inputs.branchRegex}`);
-    core.info(`lowercase-branch: ${inputs.lowercaseBranch}`);
-    core.info(`title-template: ${inputs.titleTemplate}`);
-    core.info(`uppercase-title: ${inputs.uppercaseTitle}`);
-    core.info(`body-template: ${inputs.bodyTemplate}`);
-    core.info(`uppercase-body: ${inputs.uppercaseBody}`);
-    core.info(`typeof uppercaseTitleStr: ${typeof inputs.uppercaseTitleStr}`);
-    core.info(`typeof uppercaseTitle: ${typeof inputs.uppercaseTitle}`);
-
     const branchName = github.context.payload.pull_request.head.ref;
     const branch = inputs.lowercaseBranch ? branchName.toLowerCase() : branchName;
-    core.info(`branch: ${branch}`);
+    core.debug(`branch: ${branch}`);
 
     const matches = branch.match(new RegExp(inputs.branchRegex));
     if (!matches) {
@@ -45,29 +35,27 @@ async function run() {
     }
 
     const titlePrefix = inputs.titleTemplate.replace(tokenRegex, match(inputs.uppercaseTitle));
-    core.info(`titlePrefix: ${titlePrefix}`);
-    core.info(`match title: ${match(inputs.uppercaseTitle)}`);
+    core.debug(`titlePrefix: ${titlePrefix}`);
 
     const title = github.context.payload.pull_request.title;
     const updateTitle = !title.toLowerCase().startsWith(titlePrefix.toLowerCase());
 
     if (updateTitle) {
       request.title = titlePrefix.concat(' ', title);
-      core.info(`new title: ${request.title}`);
+      core.debug(`new title: ${request.title}`);
     } else {
       core.warning('PR title is prefixed already - no updates made');
     }
 
     const bodyPrefix = inputs.bodyTemplate.replace(tokenRegex, match(inputs.uppercaseBody));
-    core.info(`bodyPrefix: ${bodyPrefix}`);
-    core.info(`match body: ${match(inputs.uppercaseBody)}`);
+    core.debug(`bodyPrefix: ${bodyPrefix}`);
 
     const body = github.context.payload.pull_request.body;
     const updateBody = !body.toLowerCase().startsWith(bodyPrefix.toLowerCase());
 
     if (updateBody) {
       request.body = bodyPrefix.concat('\n\n', body);
-      core.info(`new body: ${request.body}`);
+      core.debug(`new body: ${request.body}`);
     } else {
       core.warning('PR body is prefixed already - no updates made');
     }

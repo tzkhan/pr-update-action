@@ -11,7 +11,7 @@ inputs:
   branch-regex:
     description: 'Regex to match branch name'
     required: true
-    default: 'PROJECT-\d+'
+    default: 'FOO-\d+'
   lowercase-branch:
     description: 'Should lowercase branch name before matching text'
     required: false
