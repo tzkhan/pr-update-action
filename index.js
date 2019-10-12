@@ -15,6 +15,13 @@ async function run() {
       uppercaseBody: core.getInput('uppercase-body'),
     }
 
+    core.info(`branch-regex: ${inputs.branchRegex}`);
+    core.info(`lowercase-branch: ${inputs.lowercaseBranch}`);
+    core.info(`title-template: ${inputs.titleTemplate}`);
+    core.info(`uppercase-title: ${inputs.uppercaseTitle}`);
+    core.info(`body-template: ${inputs.bodyTemplate}`);
+    core.info(`uppercase-body: ${inputs.uppercaseBody}`);
+
     const branchName = github.context.payload.pull_request.head.ref;
     const branch = inputs.lowercaseBranch ? branchName.toLowerCase() : branchName;
     core.debug(`branch: ${branch}`);
