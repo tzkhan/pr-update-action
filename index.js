@@ -41,7 +41,7 @@ async function run() {
     const updateTitle = !title.toLowerCase().startsWith(titlePrefix.toLowerCase());
 
     if (updateTitle) {
-      request.title = titlePrefix.concat(' ', title);
+      request.title = titlePrefix.concat(title);
       core.debug(`new title: ${request.title}`);
     } else {
       core.warning('PR title is prefixed already - no updates made');
@@ -54,7 +54,7 @@ async function run() {
     const updateBody = !body.toLowerCase().startsWith(bodyPrefix.toLowerCase());
 
     if (updateBody) {
-      request.body = bodyPrefix.concat('\n\n', body);
+      request.body = bodyPrefix.concat(body);
       core.debug(`new body: ${request.body}`);
     } else {
       core.warning('PR body is prefixed already - no updates made');
