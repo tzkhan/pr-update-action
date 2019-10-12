@@ -59,10 +59,10 @@ jobs:
         uppercase-body: true
 ```
 
-produces this effect...
+produces this effect... :point_down:
 
-before:
+#### before:
 ![pr before](img/pr-before.png)
 
-after:
+#### after:
 ![pr after](img/pr-after.png)
