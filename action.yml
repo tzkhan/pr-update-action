@@ -11,7 +11,7 @@ inputs:
   branch-regex:
     description: 'Regex to match branch name'
     required: true
-    default: 'PROJECT-\d+'
+    default: 'FOO-\d+'
   lowercase-branch:
     description: 'Should lowercase branch name before matching text'
     required: false
@@ -20,6 +20,10 @@ inputs:
     description: 'Title prefix template where branch info gets substituted in'
     required: true
     default: '[%branch%]'
+  title-prefix-space:
+    description: 'Should add space after title prefix'
+    required: false
+    default: true
   uppercase-title:
     description: 'Should uppercase title prefix'
     required: false
@@ -28,6 +32,10 @@ inputs:
     description: 'Body prefix template where branch info gets substituted in'
     required: true
     default: '[%branch%](https://url/to/browse/ticket/%branch%)'
+  body-prefix-newline-count:
+    description: 'Number of newlines to separate body and its prefix'
+    required: false
+    default: 2
   uppercase-body:
     description: 'Should uppercase body prefix'
     required: false
@@ -35,3 +43,4 @@ inputs:
 branding:
   icon: 'edit-3'
   color: 'green'
+  

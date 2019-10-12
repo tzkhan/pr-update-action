@@ -8,11 +8,13 @@ async function run() {
     const inputs = {
       token: core.getInput('repo-token', {required: true}),
       branchRegex: core.getInput('branch-regex', {required: true}),
-      lowercaseBranch: core.getInput('lowercase-branch'),
+      lowercaseBranch: (core.getInput('lowercase-branch').toLowerCase() === 'true'),
       titleTemplate: core.getInput('title-template', {required: true}),
-      uppercaseTitle: core.getInput('uppercase-title'),
+      titlePrefixSpace: (core.getInput('title-prefix-space').toLowerCase() === 'true'),
+      uppercaseTitle: (core.getInput('uppercase-title').toLowerCase() === 'true'),
       bodyTemplate: core.getInput('body-template', {required: true}),
-      uppercaseBody: core.getInput('uppercase-body'),
+      bodyPrefixNewlineCount: parseInt(core.getInput('body-prefix-newline-count', {required: true})),
+      uppercaseBody: (core.getInput('uppercase-body').toLowerCase() === 'true'),
     }
 
     const branchName = github.context.payload.pull_request.head.ref;
@@ -41,7 +43,7 @@ async function run() {
     const updateTitle = !title.toLowerCase().startsWith(titlePrefix.toLowerCase());
 
     if (updateTitle) {
-      request.title = titlePrefix.concat(' ', title);
+      request.title = titlePrefix.concat(inputs.titlePrefixSpace ? ' ': '', title);
       core.debug(`new title: ${request.title}`);
     } else {
       core.warning('PR title is prefixed already - no updates made');
@@ -54,7 +56,7 @@ async function run() {
     const updateBody = !body.toLowerCase().startsWith(bodyPrefix.toLowerCase());
 
     if (updateBody) {
-      request.body = bodyPrefix.concat('\n\n', body);
+      request.body = bodyPrefix.concat('\n'.repeat(inputs.bodyPrefixNewlineCount), body);
       core.debug(`new body: ${request.body}`);
     } else {
       core.warning('PR body is prefixed already - no updates made');

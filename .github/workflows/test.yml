@@ -3,9 +3,17 @@ name: "Update Pull Request"
 on: pull_request
 
 jobs:
-  pr_update_title:
+  pr_update_text:
     runs-on: ubuntu-latest
     steps:
-    - uses: tzkhan/pr-update-action@master
+    - uses: tzkhan/pr-update-action@v1
       with:
         repo-token: "${{ secrets.GITHUB_TOKEN }}"
+        branch-regex: 'FOO-\d+'
+        lowercase-branch: false
+        title-template: '[%branch%]'
+        title-prefix-space: true
+        uppercase-title: false
+        body-template: '[Link to %branch%](https://url/to/browse/ticket/%branch%)'
+        body-prefix-newline-count: 2
+        uppercase-body: false

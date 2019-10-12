@@ -20,11 +20,13 @@ jobs:
     - uses: tzkhan/pr-update-action@v1
       with:
         repo-token: "${{ secrets.GITHUB_TOKEN }}"                   # required - allows the action to make calls to GitHub's rest API
-        branch-regex: 'PROJECT-\d+'                                 # required - regex to match text from the head branch name
+        branch-regex: 'FOO-\d+'                                     # required - regex to match text from the head branch name
         lowercase-branch: true                                      # optional - whether to lowercase branch name before matching
         title-template: '[%branch%]'                                # optional - text template to prefix title
+        title-prefix-space: true                                    # optional - whether to add a space after title prefix
         uppercase-title: true                                       # optional - whether to uppercase title prefix
         body-template: '[%branch%](https://browse/ticket/%branch%)' # optional - text template to prefix body
+        body-prefix-newline-count: 2                                # optional - number of newlines to insert after body prefix
         uppercase-body: true                                        # optional - whether to uppercase body prefix
 ```
 
