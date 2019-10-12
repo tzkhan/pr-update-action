@@ -8,11 +8,12 @@ async function run() {
     const inputs = {
       token: core.getInput('repo-token', {required: true}),
       branchRegex: core.getInput('branch-regex', {required: true}),
-      lowercaseBranch: core.getInput('lowercase-branch'),
+      lowercaseBranch: (core.getInput('lowercase-branch').toLowerCase() === 'true'),
       titleTemplate: core.getInput('title-template', {required: true}),
-      uppercaseTitle: core.getInput('uppercase-title'),
+      uppercaseTitleStr: core.getInput('uppercase-title').toLowerCase(),
+      uppercaseTitle: (core.getInput('uppercase-title').toLowerCase() === 'true'),
       bodyTemplate: core.getInput('body-template', {required: true}),
-      uppercaseBody: core.getInput('uppercase-body'),
+      uppercaseBody: (core.getInput('uppercase-body').toLowerCase() === 'true'),
     }
 
     core.info(`branch-regex: ${inputs.branchRegex}`);
@@ -21,6 +22,8 @@ async function run() {
     core.info(`uppercase-title: ${inputs.uppercaseTitle}`);
     core.info(`body-template: ${inputs.bodyTemplate}`);
     core.info(`uppercase-body: ${inputs.uppercaseBody}`);
+    core.info(`typeof uppercaseTitleStr: ${typeof inputs.uppercaseTitleStr}`);
+    core.info(`typeof uppercaseTitle: ${typeof inputs.uppercaseTitle}`);
 
     const branchName = github.context.payload.pull_request.head.ref;
     const branch = inputs.lowercaseBranch ? branchName.toLowerCase() : branchName;
