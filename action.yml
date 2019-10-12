@@ -20,10 +20,10 @@ inputs:
     description: 'Title prefix template where branch info gets substituted in'
     required: true
     default: '[%branch%]'
-  title-template-separator:
-    description: 'Title prefix separator'
+  title-prefix-space:
+    description: 'Should add space after title prefix'
     required: false
-    default: ' '
+    default: true
   uppercase-title:
     description: 'Should uppercase title prefix'
     required: false
@@ -32,10 +32,10 @@ inputs:
     description: 'Body prefix template where branch info gets substituted in'
     required: true
     default: '[%branch%](https://url/to/browse/ticket/%branch%)'
-  body-template-separator:
-    description: 'Body prefix separator'
+  body-prefix-newline-count:
+    description: 'Number of newlines to separate body and its prefix'
     required: false
-    default: '\n\n'
+    default: 2
   uppercase-body:
     description: 'Should uppercase body prefix'
     required: false

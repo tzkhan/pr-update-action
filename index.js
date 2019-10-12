@@ -10,15 +10,12 @@ async function run() {
       branchRegex: core.getInput('branch-regex', {required: true}),
       lowercaseBranch: (core.getInput('lowercase-branch').toLowerCase() === 'true'),
       titleTemplate: core.getInput('title-template', {required: true}),
-      titlePrefixSeparator: core.getInput('title-prefix-separator', {required: true}),
+      titlePrefixSpace: (core.getInput('title-prefix-space').toLowerCase() === 'true'),
       uppercaseTitle: (core.getInput('uppercase-title').toLowerCase() === 'true'),
       bodyTemplate: core.getInput('body-template', {required: true}),
-      bodyPrefixSeparator: core.getInput('body-prefix-separator', {required: true}),
+      bodyPrefixNewlineCount: parseInt(core.getInput('body-prefix-newline-count', {required: true})),
       uppercaseBody: (core.getInput('uppercase-body').toLowerCase() === 'true'),
     }
-
-    core.info(`title-template-sep: ${inputs.titlePrefixSeparator}`);
-    core.info(`body-template-sep: ${inputs.bodyPrefixSeparator}`);
 
     const branchName = github.context.payload.pull_request.head.ref;
     const branch = inputs.lowercaseBranch ? branchName.toLowerCase() : branchName;
@@ -46,7 +43,7 @@ async function run() {
     const updateTitle = !title.toLowerCase().startsWith(titlePrefix.toLowerCase());
 
     if (updateTitle) {
-      request.title = titlePrefix.concat(inputs.titlePrefixSeparator, title);
+      request.title = titlePrefix.concat(inputs.titlePrefixSpace ? ' ': '', title);
       core.debug(`new title: ${request.title}`);
     } else {
       core.warning('PR title is prefixed already - no updates made');
@@ -59,7 +56,7 @@ async function run() {
     const updateBody = !body.toLowerCase().startsWith(bodyPrefix.toLowerCase());
 
     if (updateBody) {
-      request.body = bodyPrefix.concat(inputs.bodyPrefixSeparator, body);
+      request.body = bodyPrefix.concat('\n'.repeat(inputs.bodyPrefixNewlineCount), body);
       core.debug(`new body: ${request.body}`);
     } else {
       core.warning('PR body is prefixed already - no updates made');
