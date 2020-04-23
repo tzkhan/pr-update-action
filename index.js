@@ -9,7 +9,8 @@ async function run() {
       token: core.getInput('repo-token', {required: true}),
       branchRegex: core.getInput('branch-regex', {required: true}),
       lowercaseBranch: (core.getInput('lowercase-branch').toLowerCase() === 'true'),
-      titleTemplate: core.getInput('title-template', {required: true}),
+      titleTemplate: core.getInput('title-template'),
+      titleReplaceTemplate: core.getInput('title-replace-template'),
       titlePrefixSpace: (core.getInput('title-prefix-space').toLowerCase() === 'true'),
       uppercaseTitle: (core.getInput('uppercase-title').toLowerCase() === 'true'),
       bodyTemplate: core.getInput('body-template', {required: true}),
@@ -36,17 +37,29 @@ async function run() {
       pull_number: github.context.payload.pull_request.number,
     }
 
-    const titlePrefix = inputs.titleTemplate.replace(tokenRegex, match(inputs.uppercaseTitle));
-    core.debug(`titlePrefix: ${titlePrefix}`);
-
     const title = github.context.payload.pull_request.title;
-    const updateTitle = !title.toLowerCase().startsWith(titlePrefix.toLowerCase());
 
-    if (updateTitle) {
-      request.title = titlePrefix.concat(inputs.titlePrefixSpace ? ' ': '', title);
+    const setTitle = inputs.titleReplaceTemplate ? inputs.titleReplaceTemplate.replace(tokenRegex, match(inputs.uppercaseTitle)) : null;
+    core.debug(`setTitle: ${setTitle}`);
+
+    const setTitle = setTitle && title !== setTitle
+    if (setTitle) {
+      request.title = setTitle;
       core.debug(`new title: ${request.title}`);
     } else {
-      core.warning('PR title is prefixed already - no updates made');
+      core.warning('PR title set not requested or set already - no updates made');
+    }
+
+    const titlePrefix = inputs.titleTemplate ? inputs.titleTemplate.replace(tokenRegex, match(inputs.uppercaseTitle)) : null;
+    core.debug(`titlePrefix: ${titlePrefix}`);
+
+    const prefixTitle = titlePrefix && !(request.title || title).toLowerCase().startsWith(titlePrefix.toLowerCase());
+
+    if (prefixTitle) {
+      request.title = titlePrefix.concat(inputs.titlePrefixSpace ? ' ': '', request.title || title);
+      core.debug(`new title: ${request.title}`);
+    } else {
+      core.warning('PR title prefix not requested or prefixed already - no updates made');
     }
 
     const bodyPrefix = inputs.bodyTemplate.replace(tokenRegex, match(inputs.uppercaseBody));
@@ -62,7 +75,7 @@ async function run() {
       core.warning('PR body is prefixed already - no updates made');
     }
 
-    if (!updateTitle && !updateBody) {
+    if (!setTitle && !prefixTitle && !updateBody) {
       return;
     }
 
