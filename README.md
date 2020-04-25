@@ -22,7 +22,8 @@ jobs:
         repo-token: "${{ secrets.GITHUB_TOKEN }}"                   # required - allows the action to make calls to GitHub's rest API
         branch-regex: 'FOO-\d+'                                     # required - regex to match text from the head branch name
         lowercase-branch: true                                      # optional - whether to lowercase branch name before matching
-        title-template: '[%branch%]'                                # optional - text template to prefix title
+        title-replace-template: '${{ github.head_ref }}'            # optional - whether to set the title to this value
+        title-prefix-template: '[%branch%]'                         # optional - text template to prefix title, can be used with replace, or independently
         title-prefix-space: true                                    # optional - whether to add a space after title prefix
         uppercase-title: true                                       # optional - whether to uppercase title prefix
         body-template: '[%branch%](https://browse/ticket/%branch%)' # optional - text template to prefix body
@@ -51,7 +52,8 @@ jobs:
         repo-token: "${{ secrets.GITHUB_TOKEN }}"
         branch-regex: 'foo-\d+'
         lowercase-branch: false
-        title-template: '[%branch%]'
+        #title-replace-template: '${{ github.head_ref }}'            # optional - whether to set the title to this value
+        title-prefix-template: '[%branch%]'
         title-prefix-space: true
         uppercase-title: true
         body-template: '[Link to %branch%](https://url/to/browse/ticket/%branch%)'
