@@ -1,6 +1,6 @@
 # Pull Request Updater
 
-This is a GitHub Action that updates a pull request with information extracted from branch name.
+This is a GitHub Action that updates a pull request with information extracted from branch name. The pull request title and body can either be prefixed or replaced.
 
 ## Usage
 
@@ -20,14 +20,16 @@ jobs:
     - uses: tzkhan/pr-update-action@v1
       with:
         repo-token: "${{ secrets.GITHUB_TOKEN }}"                   # required - allows the action to make calls to GitHub's rest API
-        branch-regex: 'FOO-\d+'                                     # required - regex to match text from the head branch name
+        branch-regex: 'foo-\d+'                                     # required - regex to match text from the head branch name
         lowercase-branch: true                                      # optional - whether to lowercase branch name before matching
-        title-template: '[%branch%]'                                # optional - text template to prefix title
+        title-template: '[%branch%]'                                # required - text template to update title with
+        replace-title: false                                        # optional - whether to prefix or replace title with title-template
         title-prefix-space: true                                    # optional - whether to add a space after title prefix
-        uppercase-title: true                                       # optional - whether to uppercase title prefix
-        body-template: '[%branch%](https://browse/ticket/%branch%)' # optional - text template to prefix body
+        uppercase-title: true                                       # optional - whether to uppercase matched branch info in title
+        body-template: '[%branch%](https://browse/ticket/%branch%)' # required - text template to prefix body
+        replace-body: false                                         # optional - whether to prefix or replace body with body-template
         body-prefix-newline-count: 2                                # optional - number of newlines to insert after body prefix
-        uppercase-body: true                                        # optional - whether to uppercase body prefix
+        uppercase-body: true                                        # optional - whether to uppercase matched branch info in body
 ```
 
 `body-template` can be set to a GitHub secret if necessary to avoid leaking sensitive data in the URLs for instance. `body-template: ${{ secrets.PR_BODY_PREFIX_TEMPLATE }}`
@@ -52,9 +54,11 @@ jobs:
         branch-regex: 'foo-\d+'
         lowercase-branch: false
         title-template: '[%branch%]'
+        replace-title: false
         title-prefix-space: true
         uppercase-title: true
         body-template: '[Link to %branch%](https://url/to/browse/ticket/%branch%)'
+        replace-body: false
         body-prefix-newline-count: 2
         uppercase-body: true
 ```
