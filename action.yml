@@ -17,11 +17,15 @@ inputs:
     required: false
     default: true
   title-template:
+    description: 'Title prefix template where branch info gets substituted in -- equivalent to title-prefix-template but present for backward compatibility'
+    required: false
+    default: '[%branch%]'
+  title-prefix-template:
     description: 'Title prefix template where branch info gets substituted in'
     required: false
     default: '[%branch%]'
   title-replace-template:
-    description: 'Title template that replaces the existing title rather than prefixing it as title-template'
+    description: 'Title template that replaces the existing title -- this can be used in addition to prefixing'
     required: false
   title-prefix-space:
     description: 'Should add space after title prefix'

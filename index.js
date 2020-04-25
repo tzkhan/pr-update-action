@@ -10,6 +10,7 @@ async function run() {
       branchRegex: core.getInput('branch-regex', {required: true}),
       lowercaseBranch: (core.getInput('lowercase-branch').toLowerCase() === 'true'),
       titleTemplate: core.getInput('title-template'),
+      titlePrefixTemplate: core.getInput('title-prefix-template'),
       titleReplaceTemplate: core.getInput('title-replace-template'),
       titlePrefixSpace: (core.getInput('title-prefix-space').toLowerCase() === 'true'),
       uppercaseTitle: (core.getInput('uppercase-title').toLowerCase() === 'true'),
@@ -50,7 +51,8 @@ async function run() {
       core.warning('PR title set not requested or set already - no updates made');
     }
 
-    const titlePrefix = inputs.titleTemplate ? inputs.titleTemplate.replace(tokenRegex, match(inputs.uppercaseTitle)) : null;
+    const configuredTitleTemplate = inputs.titlePrefixTemplate || inputs.titleTemplate;
+    const titlePrefix = configuredTitleTemplate ? configuredTitleTemplate.replace(tokenRegex, match(inputs.uppercaseTitle)) : null;
     core.debug(`titlePrefix: ${titlePrefix}`);
 
     const prefixTitle = titlePrefix && !(request.title || title).toLowerCase().startsWith(titlePrefix.toLowerCase());
