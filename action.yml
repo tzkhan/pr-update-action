@@ -3,7 +3,7 @@ description: 'GitHub Action that updates a pull request with information extract
 author: 'Tamim Khan'
 runs:
   using: 'node12'
-  main: 'index.js'
+  main: 'dist/index.js'
 inputs:
   repo-token:
     description: 'The GITHUB_TOKEN secret'
