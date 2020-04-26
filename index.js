@@ -10,9 +10,11 @@ async function run() {
       branchRegex: core.getInput('branch-regex', {required: true}),
       lowercaseBranch: (core.getInput('lowercase-branch').toLowerCase() === 'true'),
       titleTemplate: core.getInput('title-template', {required: true}),
+      replaceTitle: (core.getInput('replace-title').toLowerCase() === 'true'),
       titlePrefixSpace: (core.getInput('title-prefix-space').toLowerCase() === 'true'),
       uppercaseTitle: (core.getInput('uppercase-title').toLowerCase() === 'true'),
       bodyTemplate: core.getInput('body-template', {required: true}),
+      replaceBody: (core.getInput('replace-body').toLowerCase() === 'true'),
       bodyPrefixNewlineCount: parseInt(core.getInput('body-prefix-newline-count', {required: true})),
       uppercaseBody: (core.getInput('uppercase-body').toLowerCase() === 'true'),
     }
@@ -36,30 +38,38 @@ async function run() {
       pull_number: github.context.payload.pull_request.number,
     }
 
-    const titlePrefix = inputs.titleTemplate.replace(tokenRegex, match(inputs.uppercaseTitle));
-    core.debug(`titlePrefix: ${titlePrefix}`);
-
     const title = github.context.payload.pull_request.title;
-    const updateTitle = !title.toLowerCase().startsWith(titlePrefix.toLowerCase());
+    const processedTitle = inputs.titleTemplate.replace(tokenRegex, match(inputs.uppercaseTitle));
+    core.debug(`processedTitle: ${processedTitle}`);
+
+    const updateTitle = inputs.replaceTitle
+      ? title.toLowerCase() !== processedTitle.toLowerCase()
+      : !title.toLowerCase().startsWith(processedTitle.toLowerCase());
 
     if (updateTitle) {
-      request.title = titlePrefix.concat(inputs.titlePrefixSpace ? ' ': '', title);
+      request.title = inputs.replaceTitle
+      ? processedTitle
+      : processedTitle.concat(inputs.titlePrefixSpace ? ' ': '', title);
       core.debug(`new title: ${request.title}`);
     } else {
-      core.warning('PR title is prefixed already - no updates made');
+      core.warning('PR title is up to date already - no updates made');
     }
 
-    const bodyPrefix = inputs.bodyTemplate.replace(tokenRegex, match(inputs.uppercaseBody));
-    core.debug(`bodyPrefix: ${bodyPrefix}`);
-
     const body = github.context.payload.pull_request.body;
-    const updateBody = !body.toLowerCase().startsWith(bodyPrefix.toLowerCase());
+    const processedBody = inputs.bodyTemplate.replace(tokenRegex, match(inputs.uppercaseBody));
+    core.debug(`processedBody: ${processedBody}`);
+
+    const updateBody = inputs.replaceBody
+      ? body.toLowerCase() !== processedBody.toLowerCase()
+      : !body.toLowerCase().startsWith(processedBody.toLowerCase());
 
     if (updateBody) {
-      request.body = bodyPrefix.concat('\n'.repeat(inputs.bodyPrefixNewlineCount), body);
+      request.body = inputs.replaceBody
+      ? processedBody
+      : processedBody.concat('\n'.repeat(inputs.bodyPrefixNewlineCount), body);
       core.debug(`new body: ${request.body}`);
     } else {
-      core.warning('PR body is prefixed already - no updates made');
+      core.warning('PR body is up to date already - no updates made');
     }
 
     if (!updateTitle && !updateBody) {
