@@ -1,5 +1,8 @@
 # Pull Request Updater
 
+![Update Pull Request](https://github.com/tzkhan/pr-update-action/workflows/Update%20Pull%20Request/badge.svg)
+[![Release](https://img.shields.io/github/release/tzkhan/pr-update-action.svg)](https://github.com/tzkhan/pr-update-action/releases/latest)
+
 This is a GitHub Action that updates a pull request with information extracted from branch name. The pull request title and body can either be prefixed or replaced.
 
 ## Usage
@@ -48,7 +51,7 @@ jobs:
   pr_update_text:
     runs-on: ubuntu-latest
     steps:
-    - uses: tzkhan/pr-update-action@v1
+    - uses: tzkhan/pr-update-action@v1.1.0
       with:
         repo-token: "${{ secrets.GITHUB_TOKEN }}"
         branch-regex: 'foo-\d+'

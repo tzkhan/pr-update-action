@@ -6,16 +6,16 @@ jobs:
   pr_update_text:
     runs-on: ubuntu-latest
     steps:
-    - uses: tzkhan/pr-update-action@v1.1.0
-      with:
-        repo-token: "${{ secrets.GITHUB_TOKEN }}"
-        branch-regex: 'foo-\d+'
-        lowercase-branch: false
-        title-template: '[%branch%]'
-        replace-title: false
-        title-prefix-space: true
-        uppercase-title: false
-        body-template: '[Link to %branch%](https://url/to/browse/ticket/%branch%)'
-        replace-body: false
-        body-prefix-newline-count: 2
-        uppercase-body: false
+      - uses: tzkhan/pr-update-action@v1.1.0
+        with:
+          repo-token: "${{ secrets.GITHUB_TOKEN }}"
+          branch-regex: '[a-z\d-_.\/]+'
+          lowercase-branch: true
+          title-template: "[updated-by-action]"
+          replace-title: false
+          title-prefix-space: true
+          uppercase-title: false
+          body-template: "[Updated by Pull Request Updater action]"
+          replace-body: false
+          body-prefix-newline-count: 2
+          uppercase-body: false
