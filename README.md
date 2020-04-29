@@ -1,6 +1,6 @@
 # Pull Request Updater
 
-![Update Pull Request](https://github.com/tzkhan/pr-update-action/workflows/Update%20Pull%20Request/badge.svg)
+![Update Pull Request](https://github.com/tzkhan/pr-update-action/workflows/Update%20Pull%20Request/badge.svg?branch=feature%2Ftesting-action)
 [![Release](https://img.shields.io/github/release/tzkhan/pr-update-action.svg)](https://github.com/tzkhan/pr-update-action/releases/latest)
 
 This is a GitHub Action that updates a pull request with information extracted from branch name. The pull request title and body can either be prefixed or replaced.
