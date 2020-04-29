@@ -35,7 +35,7 @@ jobs:
         uppercase-body: true                                        # optional - whether to uppercase matched branch info in body
 ```
 
-`body-template` can be set to a GitHub secret if necessary to avoid leaking sensitive data in the URLs for instance. `body-template: ${{ secrets.PR_BODY_PREFIX_TEMPLATE }}`
+`body-template` can be set to a GitHub secret if necessary to avoid leaking sensitive data in the URLs for instance - `body-template: ${{ secrets.PR_BODY_PREFIX_TEMPLATE }}`
 
 _**NOTE**: template values must contain the `%branch%` token (can occur multiple times) so that it can be replaced with the matched text from the branch name._
 
