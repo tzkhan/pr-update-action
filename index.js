@@ -38,7 +38,7 @@ async function run() {
       pull_number: github.context.payload.pull_request.number,
     }
 
-    const title = github.context.payload.pull_request.title;
+    const title = github.context.payload.pull_request.title || '';
     const processedTitle = inputs.titleTemplate.replace(tokenRegex, match(inputs.uppercaseTitle));
     core.debug(`processedTitle: ${processedTitle}`);
 
@@ -55,7 +55,7 @@ async function run() {
       core.warning('PR title is up to date already - no updates made');
     }
 
-    const body = github.context.payload.pull_request.body;
+    const body = github.context.payload.pull_request.body || '';
     const processedBody = inputs.bodyTemplate.replace(tokenRegex, match(inputs.uppercaseBody));
     core.debug(`processedBody: ${processedBody}`);
 

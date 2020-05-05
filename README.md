@@ -20,7 +20,7 @@ jobs:
   update_pr:
     runs-on: ubuntu-latest
     steps:
-    - uses: tzkhan/pr-update-action@v1.1.0
+    - uses: tzkhan/pr-update-action@v1.1.1
       with:
         repo-token: "${{ secrets.GITHUB_TOKEN }}"                   # required - allows the action to make calls to GitHub's rest API
         branch-regex: 'foo-\d+'                                     # required - regex to match text from the head branch name
@@ -51,7 +51,7 @@ jobs:
   pr_update_text:
     runs-on: ubuntu-latest
     steps:
-    - uses: tzkhan/pr-update-action@v1.1.0
+    - uses: tzkhan/pr-update-action@v1.1.1
       with:
         repo-token: "${{ secrets.GITHUB_TOKEN }}"
         branch-regex: 'foo-\d+'
