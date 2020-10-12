@@ -7498,7 +7498,7 @@ async function run() {
 
     const branchName = inputs.useBaseBranch ? github.context.payload.pull_request.base.ref : github.context.payload.pull_request.head.ref;
     const branch = inputs.lowercaseBranch ? branchName.toLowerCase() : branchName;
-    core.debug(`branch: ${branch}`);
+    core.info(`branch: ${branch}`);
 
     const matches = branch.match(new RegExp(inputs.branchRegex));
     if (!matches) {
