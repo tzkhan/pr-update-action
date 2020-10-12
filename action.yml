@@ -8,6 +8,10 @@ inputs:
   repo-token:
     description: 'The GITHUB_TOKEN secret'
     required: true
+  use-base-branch:
+    description: 'Whether to use target branch or pr branch for branch name'
+    required: false
+    default: false
   branch-regex:
     description: 'Regex to match branch name'
     required: true
