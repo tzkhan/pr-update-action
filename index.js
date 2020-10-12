@@ -7,6 +7,7 @@ async function run() {
 
     const inputs = {
       token: core.getInput('repo-token', {required: true}),
+      useBaseBranch: (core.getInput('use-base-branch').toLowerCase() === 'true'),
       branchRegex: core.getInput('branch-regex', {required: true}),
       lowercaseBranch: (core.getInput('lowercase-branch').toLowerCase() === 'true'),
       titleTemplate: core.getInput('title-template', {required: true}),
@@ -19,9 +20,9 @@ async function run() {
       uppercaseBody: (core.getInput('uppercase-body').toLowerCase() === 'true'),
     }
 
-    const branchName = github.context.payload.pull_request.head.ref;
+    const branchName = inputs.useBaseBranch ? github.context.payload.pull_request.base.ref : github.context.payload.pull_request.head.ref;
     const branch = inputs.lowercaseBranch ? branchName.toLowerCase() : branchName;
-    core.debug(`branch: ${branch}`);
+    core.info(`branch: ${branch}`);
 
     const matches = branch.match(new RegExp(inputs.branchRegex));
     if (!matches) {
