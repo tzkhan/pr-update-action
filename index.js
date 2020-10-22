@@ -9,7 +9,7 @@ async function run() {
       token: core.getInput('repo-token', {required: true}),
       branchRegex: core.getInput('branch-regex', {required: true}),
       lowercaseBranch: (core.getInput('lowercase-branch').toLowerCase() === 'true'),
-      titleTemplate: core.getInput('title-template', {required: true}),
+      titleTemplate: core.getInput('title-template') || '',
       replaceTitle: (core.getInput('replace-title').toLowerCase() === 'true'),
       titlePrefixSpace: (core.getInput('title-prefix-space').toLowerCase() === 'true'),
       uppercaseTitle: (core.getInput('uppercase-title').toLowerCase() === 'true'),

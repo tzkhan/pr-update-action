@@ -18,7 +18,7 @@ inputs:
     default: false
   title-template:
     description: 'Title template where branch info gets substituted in'
-    required: true
+    required: false
     default: '[%branch%]'
   replace-title:
     description: 'Should replace title instead of prefixing'
