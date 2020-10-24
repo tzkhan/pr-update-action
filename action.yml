@@ -1,58 +1,70 @@
-name: 'Pull Request Updater GitHub Action'
-description: 'GitHub Action that updates a pull request with information extracted from branch name'
-author: 'Tamim Khan'
+name: "Pull Request Updater GitHub Action"
+description: "GitHub Action that updates a pull request with information extracted from branch name"
+author: "Tamim Khan"
 runs:
-  using: 'node12'
-  main: 'dist/index.js'
+  using: "node12"
+  main: "dist/index.js"
 inputs:
   repo-token:
-    description: 'The GITHUB_TOKEN secret'
+    description: "The GITHUB_TOKEN secret"
     required: true
-  use-base-branch:
-    description: 'Whether to use target branch or pr branch for branch name'
+  base-branch-regex:
+    description: "Regex to match text in the base branch name"
     required: false
-    default: false
-  branch-regex:
-    description: 'Regex to match branch name'
-    required: true
-    default: 'foo-\d+'
+    default: ""
+  head-branch-regex:
+    description: "Regex to match text in the head branch name"
+    required: false
+    default: ""
   lowercase-branch:
-    description: 'Should lowercase branch name before matching text'
+    description: "Should lowercase branch name before matching text"
     required: false
-    default: false
+    default: "true"
   title-template:
-    description: 'Title template where branch info gets substituted in'
-    required: true
-    default: '[%branch%]'
-  replace-title:
-    description: 'Should replace title instead of prefixing'
+    description: "Title template where matched text from branch gets substituted in. Allowed tokens: %basebranch% | %headbranch%"
     required: false
-    default: false
-  title-prefix-space:
-    description: 'Should add space after title prefix'
+    default: ""
+  title-update-action:
+    description: "Update action to perform on the title. Allowed values: prefix | suffix | replace"
     required: false
-    default: true
-  uppercase-title:
-    description: 'Should uppercase matched branch info in title'
+    default: "prefix"
+  title-uppercase-base-match:
+    description: "Should uppercase matched text from base branch in title"
     required: false
-    default: true
+    default: "true"
+  title-uppercase-head-match:
+    description: "Should uppercase matched text from head branch in title"
+    required: false
+    default: "true"
   body-template:
-    description: 'Body template where branch info gets substituted in'
-    required: true
-    default: '[%branch%](https://url/to/browse/ticket/%branch%)'
-  replace-body:
-    description: 'Should replace body instead of prefixing'
+    description: "Body template where matched text from branch gets substituted in. Allowed tokens: %basebranch% | %headbranch%"
     required: false
-    default: false
-  body-prefix-newline-count:
-    description: 'Number of newlines to separate body and its prefix'
+    default: ""
+  body-update-action:
+    description: "Update action to perform on the body. Allowed values: prefix | suffix | replace"
     required: false
-    default: 2
-  uppercase-body:
-    description: 'Should uppercase matched branch info in body'
+    default: "prefix"
+  body-newline-count:
+    description: "Number of newlines to separate body and its prefix or suffix"
     required: false
-    default: true
+    default: "2"
+  body-uppercase-base-match:
+    description: "Should uppercase matched text from base branch in body"
+    required: false
+    default: "true"
+  body-uppercase-head-match:
+    description: "Should uppercase matched text from head branch in body"
+    required: false
+    default: "true"
+outputs:
+  baseMatch:
+    description: "Matched text from base branch if any"
+  headMatch:
+    description: "Matched text from head branch if any"
+  titleUpdated:
+    description: "Whether the PR title was updated"
+  bodyUpdated:
+    description: "Whether the PR body was updated"
 branding:
-  icon: 'edit-3'
-  color: 'green'
-  
+  icon: "edit-3"
+  color: "green"
