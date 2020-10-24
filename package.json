@@ -4,7 +4,7 @@
   "description": "PR Update GitHub Action",
   "main": "index.js",
   "scripts": {
-    "build": "ncc build index.js --out dist --source-map --license licenses.txt",
+    "build": "ncc build index.js --out dist --source-map",
     "lint": "eslint index.js",
     "test": "eslint index.js && jest"
   },
@@ -24,12 +24,11 @@
   },
   "homepage": "https://github.com/tzkhan/pr-update-action/#readme",
   "dependencies": {
-    "@actions/core": "^1.2.6",
-    "@actions/github": "^2.0.0"
+    "@actions/core": "^1.1.1",
+    "@actions/github": "^1.1.0"
   },
   "devDependencies": {
-    "@vercel/ncc": "^0.24.0",
-    "eslint": "^7.4.0",
-    "jest": "^26.1.0"
+    "eslint": "^6.3.0",
+    "jest": "^24.9.0"
   }
 }
