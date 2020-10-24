@@ -1,2 +1,3250 @@
-require('./sourcemap-register.js');module.exports=(()=>{var __webpack_modules__={932:(e,t,n)=>{const r=n(186);const s=n(438);async function run(){try{const e=new RegExp("%basebranch%","g");const t=new RegExp("%headbranch%","g");const n={token:r.getInput("repo-token",{required:true}),baseBranchRegex:r.getInput("base-branch-regex"),headBranchRegex:r.getInput("head-branch-regex"),lowercaseBranch:r.getInput("lowercase-branch").toLowerCase()==="true",titleTemplate:r.getInput("title-template"),titleUpdateAction:r.getInput("title-update-action").toLowerCase(),titleInsertSpace:r.getInput("title-insert-space").toLowerCase()==="true",titleUppercaseBaseMatch:r.getInput("title-uppercase-base-match").toLowerCase()==="true",titleUppercaseHeadMatch:r.getInput("title-uppercase-head-match").toLowerCase()==="true",bodyTemplate:r.getInput("body-template"),bodyUpdateAction:r.getInput("body-update-action").toLowerCase(),bodyNewlineCount:parseInt(r.getInput("body-newline-count")),bodyUppercaseBaseMatch:r.getInput("body-uppercase-base-match").toLowerCase()==="true",bodyUppercaseHeadMatch:r.getInput("body-uppercase-head-match").toLowerCase()==="true"};const o=n.baseBranchRegex.trim();const i=o.length>0;const c=n.headBranchRegex.trim();const u=c.length>0;if(!i&&!u){r.setFailed("No branch regex values have been specified");return}const f={baseMatch:"",headMatch:""};if(i){const e=s.context.payload.pull_request.base.ref;const t=n.lowercaseBranch?e.toLowerCase():e;r.info(`Base branch: ${t}`);const i=t.match(new RegExp(o));if(!i){r.setFailed("Base branch name does not match given regex");return}f.baseMatch=i[0];r.info(`Matched base branch text: ${f.baseMatch}`);r.setOutput("baseMatch",f.baseMatch)}if(u){const e=s.context.payload.pull_request.head.ref;const t=n.lowercaseBranch?e.toLowerCase():e;r.info(`Head branch: ${t}`);const o=t.match(new RegExp(c));if(!o){r.setFailed("Head branch name does not match given regex");return}f.headMatch=o[0];r.info(`Matched head branch text: ${f.headMatch}`);r.setOutput("headMatch",f.headMatch)}const a={owner:s.context.repo.owner,repo:s.context.repo.repo,pull_number:s.context.payload.pull_request.number};const d=(e,t)=>e?t.toUpperCase():t;const l=s.context.payload.pull_request.title||"";const h=n.titleTemplate.replace(e,d(n.titleUppercaseBaseMatch,f.baseMatch)).replace(t,d(n.titleUppercaseHeadMatch,f.headMatch));r.info(`Processed title text: ${h}`);const p={prefix:!l.toLowerCase().startsWith(h.toLowerCase()),suffix:!l.toLowerCase().endsWith(h.toLowerCase()),replace:l.toLowerCase()!==h.toLowerCase()}[n.titleUpdateAction]||false;r.setOutput("titleUpdated",p);if(p){a.title={prefix:h.concat(n.titleInsertSpace?" ":"",l),suffix:l.concat(n.titleInsertSpace?" ":"",h),replace:h}[n.titleUpdateAction];r.info(`New title: ${a.title}`)}else{r.warning("No updates were made to PR title")}const b=s.context.payload.pull_request.body||"";const g=n.bodyTemplate.replace(e,d(n.bodyUppercaseBaseMatch,f.baseMatch)).replace(t,d(n.bodyUppercaseHeadMatch,f.headMatch));r.debug(`Processed body text: ${g}`);const y={prefix:!b.toLowerCase().startsWith(g.toLowerCase()),suffix:!b.toLowerCase().endsWith(g.toLowerCase()),replace:b.toLowerCase()!==g.toLowerCase()}[n.bodyUpdateAction]||false;r.setOutput("bodyUpdated",y);if(y){a.body={prefix:g.concat("\n".repeat(n.bodyNewlineCount),b),suffix:b.concat("\n".repeat(n.bodyNewlineCount),g),replace:g}[n.bodyUpdateAction];r.debug(`New body: ${a.body}`)}else{r.warning("No updates were made to PR body")}if(!p&&!y){return}const m=new s.GitHub(n.token);const w=await m.pulls.update(a);r.info(`Response: ${w.status}`);if(w.status!==200){r.error("Updating the pull request has failed")}}catch(e){r.error(e);r.setFailed(e.message)}}run()},351:(e,t,n)=>{"use strict";Object.defineProperty(t,"__esModule",{value:true});const r=n(87);function issueCommand(e,t,n){const s=new Command(e,t,n);process.stdout.write(s.toString()+r.EOL)}t.issueCommand=issueCommand;function issue(e,t=""){issueCommand(e,{},t)}t.issue=issue;const s="::";class Command{constructor(e,t,n){if(!e){e="missing.command"}this.command=e;this.properties=t;this.message=n}toString(){let e=s+this.command;if(this.properties&&Object.keys(this.properties).length>0){e+=" ";for(const t in this.properties){if(this.properties.hasOwnProperty(t)){const n=this.properties[t];if(n){e+=`${t}=${escape(`${n||""}`)},`}}}}e+=s;const t=`${this.message||""}`;e+=escapeData(t);return e}}function escapeData(e){return e.replace(/\r/g,"%0D").replace(/\n/g,"%0A")}function escape(e){return e.replace(/\r/g,"%0D").replace(/\n/g,"%0A").replace(/]/g,"%5D").replace(/;/g,"%3B")}},186:function(e,t,n){"use strict";var r=this&&this.__awaiter||function(e,t,n,r){function adopt(e){return e instanceof n?e:new n(function(t){t(e)})}return new(n||(n=Promise))(function(n,s){function fulfilled(e){try{step(r.next(e))}catch(e){s(e)}}function rejected(e){try{step(r["throw"](e))}catch(e){s(e)}}function step(e){e.done?n(e.value):adopt(e.value).then(fulfilled,rejected)}step((r=r.apply(e,t||[])).next())})};Object.defineProperty(t,"__esModule",{value:true});const s=n(351);const o=n(87);const i=n(622);var c;(function(e){e[e["Success"]=0]="Success";e[e["Failure"]=1]="Failure"})(c=t.ExitCode||(t.ExitCode={}));function exportVariable(e,t){process.env[e]=t;s.issueCommand("set-env",{name:e},t)}t.exportVariable=exportVariable;function setSecret(e){s.issueCommand("add-mask",{},e)}t.setSecret=setSecret;function addPath(e){s.issueCommand("add-path",{},e);process.env["PATH"]=`${e}${i.delimiter}${process.env["PATH"]}`}t.addPath=addPath;function getInput(e,t){const n=process.env[`INPUT_${e.replace(/ /g,"_").toUpperCase()}`]||"";if(t&&t.required&&!n){throw new Error(`Input required and not supplied: ${e}`)}return n.trim()}t.getInput=getInput;function setOutput(e,t){s.issueCommand("set-output",{name:e},t)}t.setOutput=setOutput;function setFailed(e){process.exitCode=c.Failure;error(e)}t.setFailed=setFailed;function debug(e){s.issueCommand("debug",{},e)}t.debug=debug;function error(e){s.issue("error",e)}t.error=error;function warning(e){s.issue("warning",e)}t.warning=warning;function info(e){process.stdout.write(e+o.EOL)}t.info=info;function startGroup(e){s.issue("group",e)}t.startGroup=startGroup;function endGroup(){s.issue("endgroup")}t.endGroup=endGroup;function group(e,t){return r(this,void 0,void 0,function*(){startGroup(e);let n;try{n=yield t()}finally{endGroup()}return n})}t.group=group},53:(e,t,n)=>{"use strict";Object.defineProperty(t,"__esModule",{value:true});const r=n(747);const s=n(87);class Context{constructor(){this.payload={};if(process.env.GITHUB_EVENT_PATH){if(r.existsSync(process.env.GITHUB_EVENT_PATH)){this.payload=JSON.parse(r.readFileSync(process.env.GITHUB_EVENT_PATH,{encoding:"utf8"}))}else{process.stdout.write(`GITHUB_EVENT_PATH ${process.env.GITHUB_EVENT_PATH} does not exist${s.EOL}`)}}this.eventName=process.env.GITHUB_EVENT_NAME;this.sha=process.env.GITHUB_SHA;this.ref=process.env.GITHUB_REF;this.workflow=process.env.GITHUB_WORKFLOW;this.action=process.env.GITHUB_ACTION;this.actor=process.env.GITHUB_ACTOR}get issue(){const e=this.payload;return Object.assign(Object.assign({},this.repo),{number:(e.issue||e.pullRequest||e).number})}get repo(){if(process.env.GITHUB_REPOSITORY){const[e,t]=process.env.GITHUB_REPOSITORY.split("/");return{owner:e,repo:t}}if(this.payload.repository){return{owner:this.payload.repository.owner.login,repo:this.payload.repository.name}}throw new Error("context.repo requires a GITHUB_REPOSITORY environment variable like 'owner/repo'")}}t.Context=Context},438:function(e,t,n){"use strict";var r=this&&this.__importDefault||function(e){return e&&e.__esModule?e:{default:e}};var s=this&&this.__importStar||function(e){if(e&&e.__esModule)return e;var t={};if(e!=null)for(var n in e)if(Object.hasOwnProperty.call(e,n))t[n]=e[n];t["default"]=e;return t};Object.defineProperty(t,"__esModule",{value:true});const o=n(467);const i=r(n(785));const c=s(n(53));i.default.prototype=new i.default;t.context=new c.Context;class GitHub extends i.default{constructor(e,t={}){super(Object.assign(Object.assign({},t),{auth:`token ${e}`}));this.graphql=o.defaults({headers:{authorization:`token ${e}`}})}}t.GitHub=GitHub},440:(e,t,n)=>{"use strict";Object.defineProperty(t,"__esModule",{value:true});var r=n(558);var s=n(30);function lowercaseKeys(e){if(!e){return{}}return Object.keys(e).reduce((t,n)=>{t[n.toLowerCase()]=e[n];return t},{})}function mergeDeep(e,t){const n=Object.assign({},e);Object.keys(t).forEach(s=>{if(r.isPlainObject(t[s])){if(!(s in e))Object.assign(n,{[s]:t[s]});else n[s]=mergeDeep(e[s],t[s])}else{Object.assign(n,{[s]:t[s]})}});return n}function removeUndefinedProperties(e){for(const t in e){if(e[t]===undefined){delete e[t]}}return e}function merge(e,t,n){if(typeof t==="string"){let[e,r]=t.split(" ");n=Object.assign(r?{method:e,url:r}:{url:e},n)}else{n=Object.assign({},t)}n.headers=lowercaseKeys(n.headers);removeUndefinedProperties(n);removeUndefinedProperties(n.headers);const r=mergeDeep(e||{},n);if(e&&e.mediaType.previews.length){r.mediaType.previews=e.mediaType.previews.filter(e=>!r.mediaType.previews.includes(e)).concat(r.mediaType.previews)}r.mediaType.previews=r.mediaType.previews.map(e=>e.replace(/-preview/,""));return r}function addQueryParameters(e,t){const n=/\?/.test(e)?"&":"?";const r=Object.keys(t);if(r.length===0){return e}return e+n+r.map(e=>{if(e==="q"){return"q="+t.q.split("+").map(encodeURIComponent).join("+")}return`${e}=${encodeURIComponent(t[e])}`}).join("&")}const o=/\{[^}]+\}/g;function removeNonChars(e){return e.replace(/^\W+|\W+$/g,"").split(/,/)}function extractUrlVariableNames(e){const t=e.match(o);if(!t){return[]}return t.map(removeNonChars).reduce((e,t)=>e.concat(t),[])}function omit(e,t){return Object.keys(e).filter(e=>!t.includes(e)).reduce((t,n)=>{t[n]=e[n];return t},{})}function encodeReserved(e){return e.split(/(%[0-9A-Fa-f]{2})/g).map(function(e){if(!/%[0-9A-Fa-f]/.test(e)){e=encodeURI(e).replace(/%5B/g,"[").replace(/%5D/g,"]")}return e}).join("")}function encodeUnreserved(e){return encodeURIComponent(e).replace(/[!'()*]/g,function(e){return"%"+e.charCodeAt(0).toString(16).toUpperCase()})}function encodeValue(e,t,n){t=e==="+"||e==="#"?encodeReserved(t):encodeUnreserved(t);if(n){return encodeUnreserved(n)+"="+t}else{return t}}function isDefined(e){return e!==undefined&&e!==null}function isKeyOperator(e){return e===";"||e==="&"||e==="?"}function getValues(e,t,n,r){var s=e[n],o=[];if(isDefined(s)&&s!==""){if(typeof s==="string"||typeof s==="number"||typeof s==="boolean"){s=s.toString();if(r&&r!=="*"){s=s.substring(0,parseInt(r,10))}o.push(encodeValue(t,s,isKeyOperator(t)?n:""))}else{if(r==="*"){if(Array.isArray(s)){s.filter(isDefined).forEach(function(e){o.push(encodeValue(t,e,isKeyOperator(t)?n:""))})}else{Object.keys(s).forEach(function(e){if(isDefined(s[e])){o.push(encodeValue(t,s[e],e))}})}}else{const e=[];if(Array.isArray(s)){s.filter(isDefined).forEach(function(n){e.push(encodeValue(t,n))})}else{Object.keys(s).forEach(function(n){if(isDefined(s[n])){e.push(encodeUnreserved(n));e.push(encodeValue(t,s[n].toString()))}})}if(isKeyOperator(t)){o.push(encodeUnreserved(n)+"="+e.join(","))}else if(e.length!==0){o.push(e.join(","))}}}}else{if(t===";"){if(isDefined(s)){o.push(encodeUnreserved(n))}}else if(s===""&&(t==="&"||t==="?")){o.push(encodeUnreserved(n)+"=")}else if(s===""){o.push("")}}return o}function parseUrl(e){return{expand:expand.bind(null,e)}}function expand(e,t){var n=["+","#",".","/",";","?","&"];return e.replace(/\{([^\{\}]+)\}|([^\{\}]+)/g,function(e,r,s){if(r){let e="";const s=[];if(n.indexOf(r.charAt(0))!==-1){e=r.charAt(0);r=r.substr(1)}r.split(/,/g).forEach(function(n){var r=/([^:\*]*)(?::(\d+)|(\*))?/.exec(n);s.push(getValues(t,e,r[1],r[2]||r[3]))});if(e&&e!=="+"){var o=",";if(e==="?"){o="&"}else if(e!=="#"){o=e}return(s.length!==0?e:"")+s.join(o)}else{return s.join(",")}}else{return encodeReserved(s)}})}function parse(e){let t=e.method.toUpperCase();let n=(e.url||"/").replace(/:([a-z]\w+)/g,"{$1}");let r=Object.assign({},e.headers);let s;let o=omit(e,["method","baseUrl","url","headers","request","mediaType"]);const i=extractUrlVariableNames(n);n=parseUrl(n).expand(o);if(!/^http/.test(n)){n=e.baseUrl+n}const c=Object.keys(e).filter(e=>i.includes(e)).concat("baseUrl");const u=omit(o,c);const f=/application\/octet-stream/i.test(r.accept);if(!f){if(e.mediaType.format){r.accept=r.accept.split(/,/).map(t=>t.replace(/application\/vnd(\.\w+)(\.v3)?(\.\w+)?(\+json)?$/,`application/vnd$1$2.${e.mediaType.format}`)).join(",")}if(e.mediaType.previews.length){const t=r.accept.match(/[\w-]+(?=-preview)/g)||[];r.accept=t.concat(e.mediaType.previews).map(t=>{const n=e.mediaType.format?`.${e.mediaType.format}`:"+json";return`application/vnd.github.${t}-preview${n}`}).join(",")}}if(["GET","HEAD"].includes(t)){n=addQueryParameters(n,u)}else{if("data"in u){s=u.data}else{if(Object.keys(u).length){s=u}else{r["content-length"]=0}}}if(!r["content-type"]&&typeof s!=="undefined"){r["content-type"]="application/json; charset=utf-8"}if(["PATCH","PUT"].includes(t)&&typeof s==="undefined"){s=""}return Object.assign({method:t,url:n,headers:r},typeof s!=="undefined"?{body:s}:null,e.request?{request:e.request}:null)}function endpointWithDefaults(e,t,n){return parse(merge(e,t,n))}function withDefaults(e,t){const n=merge(e,t);const r=endpointWithDefaults.bind(null,n);return Object.assign(r,{DEFAULTS:n,defaults:withDefaults.bind(null,n),merge:merge.bind(null,n),parse:parse})}const i="6.0.8";const c=`octokit-endpoint.js/${i} ${s.getUserAgent()}`;const u={method:"GET",baseUrl:"https://api.github.com",headers:{accept:"application/vnd.github.v3+json","user-agent":c},mediaType:{format:"",previews:[]}};const f=withDefaults(null,u);t.endpoint=f},558:(e,t)=>{"use strict";Object.defineProperty(t,"__esModule",{value:true});function isObject(e){return Object.prototype.toString.call(e)==="[object Object]"}function isPlainObject(e){var t,n;if(isObject(e)===false)return false;t=e.constructor;if(t===undefined)return true;n=t.prototype;if(isObject(n)===false)return false;if(n.hasOwnProperty("isPrototypeOf")===false){return false}return true}t.isPlainObject=isPlainObject},467:(e,t,n)=>{"use strict";Object.defineProperty(t,"__esModule",{value:true});var r=n(234);var s=n(30);const o="4.5.6";class GraphqlError extends Error{constructor(e,t){const n=t.data.errors[0].message;super(n);Object.assign(this,t.data);Object.assign(this,{headers:t.headers});this.name="GraphqlError";this.request=e;if(Error.captureStackTrace){Error.captureStackTrace(this,this.constructor)}}}const i=["method","baseUrl","url","headers","request","query","mediaType"];const c=/\/api\/v3\/?$/;function graphql(e,t,n){if(typeof t==="string"&&n&&"query"in n){return Promise.reject(new Error(`[@octokit/graphql] "query" cannot be used as variable name`))}const r=typeof t==="string"?Object.assign({query:t},n):t;const s=Object.keys(r).reduce((e,t)=>{if(i.includes(t)){e[t]=r[t];return e}if(!e.variables){e.variables={}}e.variables[t]=r[t];return e},{});const o=r.baseUrl||e.endpoint.DEFAULTS.baseUrl;if(c.test(o)){s.url=o.replace(c,"/api/graphql")}return e(s).then(e=>{if(e.data.errors){const t={};for(const n of Object.keys(e.headers)){t[n]=e.headers[n]}throw new GraphqlError(s,{headers:t,data:e.data})}return e.data.data})}function withDefaults(e,t){const n=e.defaults(t);const s=(e,t)=>{return graphql(n,e,t)};return Object.assign(s,{defaults:withDefaults.bind(null,n),endpoint:r.request.endpoint})}const u=withDefaults(r.request,{headers:{"user-agent":`octokit-graphql.js/${o} ${s.getUserAgent()}`},method:"POST",url:"/graphql"});function withCustomRequest(e){return withDefaults(e,{method:"POST",url:"/graphql"})}t.graphql=u;t.withCustomRequest=withCustomRequest},537:(e,t,n)=>{"use strict";Object.defineProperty(t,"__esModule",{value:true});function _interopDefault(e){return e&&typeof e==="object"&&"default"in e?e["default"]:e}var r=n(670);var s=_interopDefault(n(223));const o=s(e=>console.warn(e));class RequestError extends Error{constructor(e,t,n){super(e);if(Error.captureStackTrace){Error.captureStackTrace(this,this.constructor)}this.name="HttpError";this.status=t;Object.defineProperty(this,"code",{get(){o(new r.Deprecation("[@octokit/request-error] `error.code` is deprecated, use `error.status`."));return t}});this.headers=n.headers||{};const s=Object.assign({},n.request);if(n.request.headers.authorization){s.headers=Object.assign({},n.request.headers,{authorization:n.request.headers.authorization.replace(/ .*$/," [REDACTED]")})}s.url=s.url.replace(/\bclient_secret=\w+/g,"client_secret=[REDACTED]").replace(/\baccess_token=\w+/g,"access_token=[REDACTED]");this.request=s}}t.RequestError=RequestError},234:(e,t,n)=>{"use strict";Object.defineProperty(t,"__esModule",{value:true});function _interopDefault(e){return e&&typeof e==="object"&&"default"in e?e["default"]:e}var r=n(440);var s=n(30);var o=n(62);var i=_interopDefault(n(419));var c=n(537);const u="5.4.9";function getBufferResponse(e){return e.arrayBuffer()}function fetchWrapper(e){if(o.isPlainObject(e.body)||Array.isArray(e.body)){e.body=JSON.stringify(e.body)}let t={};let n;let r;const s=e.request&&e.request.fetch||i;return s(e.url,Object.assign({method:e.method,body:e.body,headers:e.headers,redirect:e.redirect},e.request)).then(s=>{r=s.url;n=s.status;for(const e of s.headers){t[e[0]]=e[1]}if(n===204||n===205){return}if(e.method==="HEAD"){if(n<400){return}throw new c.RequestError(s.statusText,n,{headers:t,request:e})}if(n===304){throw new c.RequestError("Not modified",n,{headers:t,request:e})}if(n>=400){return s.text().then(r=>{const s=new c.RequestError(r,n,{headers:t,request:e});try{let e=JSON.parse(s.message);Object.assign(s,e);let t=e.errors;s.message=s.message+": "+t.map(JSON.stringify).join(", ")}catch(e){}throw s})}const o=s.headers.get("content-type");if(/application\/json/.test(o)){return s.json()}if(!o||/^text\/|charset=utf-8$/.test(o)){return s.text()}return getBufferResponse(s)}).then(e=>{return{status:n,url:r,headers:t,data:e}}).catch(n=>{if(n instanceof c.RequestError){throw n}throw new c.RequestError(n.message,500,{headers:t,request:e})})}function withDefaults(e,t){const n=e.defaults(t);const r=function(e,t){const r=n.merge(e,t);if(!r.request||!r.request.hook){return fetchWrapper(n.parse(r))}const s=(e,t)=>{return fetchWrapper(n.parse(n.merge(e,t)))};Object.assign(s,{endpoint:n,defaults:withDefaults.bind(null,n)});return r.request.hook(s,r)};return Object.assign(r,{endpoint:n,defaults:withDefaults.bind(null,n)})}const f=withDefaults(r.endpoint,{headers:{"user-agent":`octokit-request.js/${u} ${s.getUserAgent()}`}});t.request=f},62:(e,t)=>{"use strict";Object.defineProperty(t,"__esModule",{value:true});function isObject(e){return Object.prototype.toString.call(e)==="[object Object]"}function isPlainObject(e){var t,n;if(isObject(e)===false)return false;t=e.constructor;if(t===undefined)return true;n=t.prototype;if(isObject(n)===false)return false;if(n.hasOwnProperty("isPrototypeOf")===false){return false}return true}t.isPlainObject=isPlainObject},670:(e,t)=>{"use strict";Object.defineProperty(t,"__esModule",{value:true});class Deprecation extends Error{constructor(e){super(e);if(Error.captureStackTrace){Error.captureStackTrace(this,this.constructor)}this.name="Deprecation"}}t.Deprecation=Deprecation},419:(e,t,n)=>{"use strict";Object.defineProperty(t,"__esModule",{value:true});function _interopDefault(e){return e&&typeof e==="object"&&"default"in e?e["default"]:e}var r=_interopDefault(n(413));var s=_interopDefault(n(605));var o=_interopDefault(n(835));var i=_interopDefault(n(211));var c=_interopDefault(n(761));const u=r.Readable;const f=Symbol("buffer");const a=Symbol("type");class Blob{constructor(){this[a]="";const e=arguments[0];const t=arguments[1];const n=[];let r=0;if(e){const t=e;const s=Number(t.length);for(let e=0;e<s;e++){const s=t[e];let o;if(s instanceof Buffer){o=s}else if(ArrayBuffer.isView(s)){o=Buffer.from(s.buffer,s.byteOffset,s.byteLength)}else if(s instanceof ArrayBuffer){o=Buffer.from(s)}else if(s instanceof Blob){o=s[f]}else{o=Buffer.from(typeof s==="string"?s:String(s))}r+=o.length;n.push(o)}}this[f]=Buffer.concat(n);let s=t&&t.type!==undefined&&String(t.type).toLowerCase();if(s&&!/[^\u0020-\u007E]/.test(s)){this[a]=s}}get size(){return this[f].length}get type(){return this[a]}text(){return Promise.resolve(this[f].toString())}arrayBuffer(){const e=this[f];const t=e.buffer.slice(e.byteOffset,e.byteOffset+e.byteLength);return Promise.resolve(t)}stream(){const e=new u;e._read=function(){};e.push(this[f]);e.push(null);return e}toString(){return"[object Blob]"}slice(){const e=this.size;const t=arguments[0];const n=arguments[1];let r,s;if(t===undefined){r=0}else if(t<0){r=Math.max(e+t,0)}else{r=Math.min(t,e)}if(n===undefined){s=e}else if(n<0){s=Math.max(e+n,0)}else{s=Math.min(n,e)}const o=Math.max(s-r,0);const i=this[f];const c=i.slice(r,r+o);const u=new Blob([],{type:arguments[2]});u[f]=c;return u}}Object.defineProperties(Blob.prototype,{size:{enumerable:true},type:{enumerable:true},slice:{enumerable:true}});Object.defineProperty(Blob.prototype,Symbol.toStringTag,{value:"Blob",writable:false,enumerable:false,configurable:true});function FetchError(e,t,n){Error.call(this,e);this.message=e;this.type=t;if(n){this.code=this.errno=n.code}Error.captureStackTrace(this,this.constructor)}FetchError.prototype=Object.create(Error.prototype);FetchError.prototype.constructor=FetchError;FetchError.prototype.name="FetchError";let d;try{d=n(877).convert}catch(e){}const l=Symbol("Body internals");const h=r.PassThrough;function Body(e){var t=this;var n=arguments.length>1&&arguments[1]!==undefined?arguments[1]:{},s=n.size;let o=s===undefined?0:s;var i=n.timeout;let c=i===undefined?0:i;if(e==null){e=null}else if(isURLSearchParams(e)){e=Buffer.from(e.toString())}else if(isBlob(e))   ;else if(Buffer.isBuffer(e))   ;else if(Object.prototype.toString.call(e)==="[object ArrayBuffer]"){e=Buffer.from(e)}else if(ArrayBuffer.isView(e)){e=Buffer.from(e.buffer,e.byteOffset,e.byteLength)}else if(e instanceof r)   ;else{e=Buffer.from(String(e))}this[l]={body:e,disturbed:false,error:null};this.size=o;this.timeout=c;if(e instanceof r){e.on("error",function(e){const n=e.name==="AbortError"?e:new FetchError(`Invalid response body while trying to fetch ${t.url}: ${e.message}`,"system",e);t[l].error=n})}}Body.prototype={get body(){return this[l].body},get bodyUsed(){return this[l].disturbed},arrayBuffer(){return consumeBody.call(this).then(function(e){return e.buffer.slice(e.byteOffset,e.byteOffset+e.byteLength)})},blob(){let e=this.headers&&this.headers.get("content-type")||"";return consumeBody.call(this).then(function(t){return Object.assign(new Blob([],{type:e.toLowerCase()}),{[f]:t})})},json(){var e=this;return consumeBody.call(this).then(function(t){try{return JSON.parse(t.toString())}catch(t){return Body.Promise.reject(new FetchError(`invalid json response body at ${e.url} reason: ${t.message}`,"invalid-json"))}})},text(){return consumeBody.call(this).then(function(e){return e.toString()})},buffer(){return consumeBody.call(this)},textConverted(){var e=this;return consumeBody.call(this).then(function(t){return convertBody(t,e.headers)})}};Object.defineProperties(Body.prototype,{body:{enumerable:true},bodyUsed:{enumerable:true},arrayBuffer:{enumerable:true},blob:{enumerable:true},json:{enumerable:true},text:{enumerable:true}});Body.mixIn=function(e){for(const t of Object.getOwnPropertyNames(Body.prototype)){if(!(t in e)){const n=Object.getOwnPropertyDescriptor(Body.prototype,t);Object.defineProperty(e,t,n)}}};function consumeBody(){var e=this;if(this[l].disturbed){return Body.Promise.reject(new TypeError(`body used already for: ${this.url}`))}this[l].disturbed=true;if(this[l].error){return Body.Promise.reject(this[l].error)}let t=this.body;if(t===null){return Body.Promise.resolve(Buffer.alloc(0))}if(isBlob(t)){t=t.stream()}if(Buffer.isBuffer(t)){return Body.Promise.resolve(t)}if(!(t instanceof r)){return Body.Promise.resolve(Buffer.alloc(0))}let n=[];let s=0;let o=false;return new Body.Promise(function(r,i){let c;if(e.timeout){c=setTimeout(function(){o=true;i(new FetchError(`Response timeout while trying to fetch ${e.url} (over ${e.timeout}ms)`,"body-timeout"))},e.timeout)}t.on("error",function(t){if(t.name==="AbortError"){o=true;i(t)}else{i(new FetchError(`Invalid response body while trying to fetch ${e.url}: ${t.message}`,"system",t))}});t.on("data",function(t){if(o||t===null){return}if(e.size&&s+t.length>e.size){o=true;i(new FetchError(`content size at ${e.url} over limit: ${e.size}`,"max-size"));return}s+=t.length;n.push(t)});t.on("end",function(){if(o){return}clearTimeout(c);try{r(Buffer.concat(n,s))}catch(t){i(new FetchError(`Could not create Buffer from response body for ${e.url}: ${t.message}`,"system",t))}})})}function convertBody(e,t){if(typeof d!=="function"){throw new Error("The package `encoding` must be installed to use the textConverted() function")}const n=t.get("content-type");let r="utf-8";let s,o;if(n){s=/charset=([^;]*)/i.exec(n)}o=e.slice(0,1024).toString();if(!s&&o){s=/<meta.+?charset=(['"])(.+?)\1/i.exec(o)}if(!s&&o){s=/<meta[\s]+?http-equiv=(['"])content-type\1[\s]+?content=(['"])(.+?)\2/i.exec(o);if(!s){s=/<meta[\s]+?content=(['"])(.+?)\1[\s]+?http-equiv=(['"])content-type\3/i.exec(o);if(s){s.pop()}}if(s){s=/charset=(.*)/i.exec(s.pop())}}if(!s&&o){s=/<\?xml.+?encoding=(['"])(.+?)\1/i.exec(o)}if(s){r=s.pop();if(r==="gb2312"||r==="gbk"){r="gb18030"}}return d(e,"UTF-8",r).toString()}function isURLSearchParams(e){if(typeof e!=="object"||typeof e.append!=="function"||typeof e.delete!=="function"||typeof e.get!=="function"||typeof e.getAll!=="function"||typeof e.has!=="function"||typeof e.set!=="function"){return false}return e.constructor.name==="URLSearchParams"||Object.prototype.toString.call(e)==="[object URLSearchParams]"||typeof e.sort==="function"}function isBlob(e){return typeof e==="object"&&typeof e.arrayBuffer==="function"&&typeof e.type==="string"&&typeof e.stream==="function"&&typeof e.constructor==="function"&&typeof e.constructor.name==="string"&&/^(Blob|File)$/.test(e.constructor.name)&&/^(Blob|File)$/.test(e[Symbol.toStringTag])}function clone(e){let t,n;let s=e.body;if(e.bodyUsed){throw new Error("cannot clone body after it is used")}if(s instanceof r&&typeof s.getBoundary!=="function"){t=new h;n=new h;s.pipe(t);s.pipe(n);e[l].body=t;s=n}return s}function extractContentType(e){if(e===null){return null}else if(typeof e==="string"){return"text/plain;charset=UTF-8"}else if(isURLSearchParams(e)){return"application/x-www-form-urlencoded;charset=UTF-8"}else if(isBlob(e)){return e.type||null}else if(Buffer.isBuffer(e)){return null}else if(Object.prototype.toString.call(e)==="[object ArrayBuffer]"){return null}else if(ArrayBuffer.isView(e)){return null}else if(typeof e.getBoundary==="function"){return`multipart/form-data;boundary=${e.getBoundary()}`}else if(e instanceof r){return null}else{return"text/plain;charset=UTF-8"}}function getTotalBytes(e){const t=e.body;if(t===null){return 0}else if(isBlob(t)){return t.size}else if(Buffer.isBuffer(t)){return t.length}else if(t&&typeof t.getLengthSync==="function"){if(t._lengthRetrievers&&t._lengthRetrievers.length==0||t.hasKnownLength&&t.hasKnownLength()){return t.getLengthSync()}return null}else{return null}}function writeToStream(e,t){const n=t.body;if(n===null){e.end()}else if(isBlob(n)){n.stream().pipe(e)}else if(Buffer.isBuffer(n)){e.write(n);e.end()}else{n.pipe(e)}}Body.Promise=global.Promise;const p=/[^\^_`a-zA-Z\-0-9!#$%&'*+.|~]/;const b=/[^\t\x20-\x7e\x80-\xff]/;function validateName(e){e=`${e}`;if(p.test(e)||e===""){throw new TypeError(`${e} is not a legal HTTP header name`)}}function validateValue(e){e=`${e}`;if(b.test(e)){throw new TypeError(`${e} is not a legal HTTP header value`)}}function find(e,t){t=t.toLowerCase();for(const n in e){if(n.toLowerCase()===t){return n}}return undefined}const g=Symbol("map");class Headers{constructor(){let e=arguments.length>0&&arguments[0]!==undefined?arguments[0]:undefined;this[g]=Object.create(null);if(e instanceof Headers){const t=e.raw();const n=Object.keys(t);for(const e of n){for(const n of t[e]){this.append(e,n)}}return}if(e==null)   ;else if(typeof e==="object"){const t=e[Symbol.iterator];if(t!=null){if(typeof t!=="function"){throw new TypeError("Header pairs must be iterable")}const n=[];for(const t of e){if(typeof t!=="object"||typeof t[Symbol.iterator]!=="function"){throw new TypeError("Each header pair must be iterable")}n.push(Array.from(t))}for(const e of n){if(e.length!==2){throw new TypeError("Each header pair must be a name/value tuple")}this.append(e[0],e[1])}}else{for(const t of Object.keys(e)){const n=e[t];this.append(t,n)}}}else{throw new TypeError("Provided initializer must be an object")}}get(e){e=`${e}`;validateName(e);const t=find(this[g],e);if(t===undefined){return null}return this[g][t].join(", ")}forEach(e){let t=arguments.length>1&&arguments[1]!==undefined?arguments[1]:undefined;let n=getHeaders(this);let r=0;while(r<n.length){var s=n[r];const o=s[0],i=s[1];e.call(t,i,o,this);n=getHeaders(this);r++}}set(e,t){e=`${e}`;t=`${t}`;validateName(e);validateValue(t);const n=find(this[g],e);this[g][n!==undefined?n:e]=[t]}append(e,t){e=`${e}`;t=`${t}`;validateName(e);validateValue(t);const n=find(this[g],e);if(n!==undefined){this[g][n].push(t)}else{this[g][e]=[t]}}has(e){e=`${e}`;validateName(e);return find(this[g],e)!==undefined}delete(e){e=`${e}`;validateName(e);const t=find(this[g],e);if(t!==undefined){delete this[g][t]}}raw(){return this[g]}keys(){return createHeadersIterator(this,"key")}values(){return createHeadersIterator(this,"value")}[Symbol.iterator](){return createHeadersIterator(this,"key+value")}}Headers.prototype.entries=Headers.prototype[Symbol.iterator];Object.defineProperty(Headers.prototype,Symbol.toStringTag,{value:"Headers",writable:false,enumerable:false,configurable:true});Object.defineProperties(Headers.prototype,{get:{enumerable:true},forEach:{enumerable:true},set:{enumerable:true},append:{enumerable:true},has:{enumerable:true},delete:{enumerable:true},keys:{enumerable:true},values:{enumerable:true},entries:{enumerable:true}});function getHeaders(e){let t=arguments.length>1&&arguments[1]!==undefined?arguments[1]:"key+value";const n=Object.keys(e[g]).sort();return n.map(t==="key"?function(e){return e.toLowerCase()}:t==="value"?function(t){return e[g][t].join(", ")}:function(t){return[t.toLowerCase(),e[g][t].join(", ")]})}const y=Symbol("internal");function createHeadersIterator(e,t){const n=Object.create(m);n[y]={target:e,kind:t,index:0};return n}const m=Object.setPrototypeOf({next(){if(!this||Object.getPrototypeOf(this)!==m){throw new TypeError("Value of `this` is not a HeadersIterator")}var e=this[y];const t=e.target,n=e.kind,r=e.index;const s=getHeaders(t,n);const o=s.length;if(r>=o){return{value:undefined,done:true}}this[y].index=r+1;return{value:s[r],done:false}}},Object.getPrototypeOf(Object.getPrototypeOf([][Symbol.iterator]())));Object.defineProperty(m,Symbol.toStringTag,{value:"HeadersIterator",writable:false,enumerable:false,configurable:true});function exportNodeCompatibleHeaders(e){const t=Object.assign({__proto__:null},e[g]);const n=find(e[g],"Host");if(n!==undefined){t[n]=t[n][0]}return t}function createHeadersLenient(e){const t=new Headers;for(const n of Object.keys(e)){if(p.test(n)){continue}if(Array.isArray(e[n])){for(const r of e[n]){if(b.test(r)){continue}if(t[g][n]===undefined){t[g][n]=[r]}else{t[g][n].push(r)}}}else if(!b.test(e[n])){t[g][n]=[e[n]]}}return t}const w=Symbol("Response internals");const O=s.STATUS_CODES;class Response{constructor(){let e=arguments.length>0&&arguments[0]!==undefined?arguments[0]:null;let t=arguments.length>1&&arguments[1]!==undefined?arguments[1]:{};Body.call(this,e,t);const n=t.status||200;const r=new Headers(t.headers);if(e!=null&&!r.has("Content-Type")){const t=extractContentType(e);if(t){r.append("Content-Type",t)}}this[w]={url:t.url,status:n,statusText:t.statusText||O[n],headers:r,counter:t.counter}}get url(){return this[w].url||""}get status(){return this[w].status}get ok(){return this[w].status>=200&&this[w].status<300}get redirected(){return this[w].counter>0}get statusText(){return this[w].statusText}get headers(){return this[w].headers}clone(){return new Response(clone(this),{url:this.url,status:this.status,statusText:this.statusText,headers:this.headers,ok:this.ok,redirected:this.redirected})}}Body.mixIn(Response.prototype);Object.defineProperties(Response.prototype,{url:{enumerable:true},status:{enumerable:true},ok:{enumerable:true},redirected:{enumerable:true},statusText:{enumerable:true},headers:{enumerable:true},clone:{enumerable:true}});Object.defineProperty(Response.prototype,Symbol.toStringTag,{value:"Response",writable:false,enumerable:false,configurable:true});const j=Symbol("Request internals");const _=o.parse;const E=o.format;const T="destroy"in r.Readable.prototype;function isRequest(e){return typeof e==="object"&&typeof e[j]==="object"}function isAbortSignal(e){const t=e&&typeof e==="object"&&Object.getPrototypeOf(e);return!!(t&&t.constructor.name==="AbortSignal")}class Request{constructor(e){let t=arguments.length>1&&arguments[1]!==undefined?arguments[1]:{};let n;if(!isRequest(e)){if(e&&e.href){n=_(e.href)}else{n=_(`${e}`)}e={}}else{n=_(e.url)}let r=t.method||e.method||"GET";r=r.toUpperCase();if((t.body!=null||isRequest(e)&&e.body!==null)&&(r==="GET"||r==="HEAD")){throw new TypeError("Request with GET/HEAD method cannot have body")}let s=t.body!=null?t.body:isRequest(e)&&e.body!==null?clone(e):null;Body.call(this,s,{timeout:t.timeout||e.timeout||0,size:t.size||e.size||0});const o=new Headers(t.headers||e.headers||{});if(s!=null&&!o.has("Content-Type")){const e=extractContentType(s);if(e){o.append("Content-Type",e)}}let i=isRequest(e)?e.signal:null;if("signal"in t)i=t.signal;if(i!=null&&!isAbortSignal(i)){throw new TypeError("Expected signal to be an instanceof AbortSignal")}this[j]={method:r,redirect:t.redirect||e.redirect||"follow",headers:o,parsedURL:n,signal:i};this.follow=t.follow!==undefined?t.follow:e.follow!==undefined?e.follow:20;this.compress=t.compress!==undefined?t.compress:e.compress!==undefined?e.compress:true;this.counter=t.counter||e.counter||0;this.agent=t.agent||e.agent}get method(){return this[j].method}get url(){return E(this[j].parsedURL)}get headers(){return this[j].headers}get redirect(){return this[j].redirect}get signal(){return this[j].signal}clone(){return new Request(this)}}Body.mixIn(Request.prototype);Object.defineProperty(Request.prototype,Symbol.toStringTag,{value:"Request",writable:false,enumerable:false,configurable:true});Object.defineProperties(Request.prototype,{method:{enumerable:true},url:{enumerable:true},headers:{enumerable:true},redirect:{enumerable:true},clone:{enumerable:true},signal:{enumerable:true}});function getNodeRequestOptions(e){const t=e[j].parsedURL;const n=new Headers(e[j].headers);if(!n.has("Accept")){n.set("Accept","*/*")}if(!t.protocol||!t.hostname){throw new TypeError("Only absolute URLs are supported")}if(!/^https?:$/.test(t.protocol)){throw new TypeError("Only HTTP(S) protocols are supported")}if(e.signal&&e.body instanceof r.Readable&&!T){throw new Error("Cancellation of streamed requests with AbortSignal is not supported in node < 8")}let s=null;if(e.body==null&&/^(POST|PUT)$/i.test(e.method)){s="0"}if(e.body!=null){const t=getTotalBytes(e);if(typeof t==="number"){s=String(t)}}if(s){n.set("Content-Length",s)}if(!n.has("User-Agent")){n.set("User-Agent","node-fetch/1.0 (+https://github.com/bitinn/node-fetch)")}if(e.compress&&!n.has("Accept-Encoding")){n.set("Accept-Encoding","gzip,deflate")}let o=e.agent;if(typeof o==="function"){o=o(t)}if(!n.has("Connection")&&!o){n.set("Connection","close")}return Object.assign({},t,{method:e.method,headers:exportNodeCompatibleHeaders(n),agent:o})}function AbortError(e){Error.call(this,e);this.type="aborted";this.message=e;Error.captureStackTrace(this,this.constructor)}AbortError.prototype=Object.create(Error.prototype);AbortError.prototype.constructor=AbortError;AbortError.prototype.name="AbortError";const B=r.PassThrough;const x=o.resolve;function fetch(e,t){if(!fetch.Promise){throw new Error("native promise missing, set fetch.Promise to your favorite alternative")}Body.Promise=fetch.Promise;return new fetch.Promise(function(n,o){const u=new Request(e,t);const f=getNodeRequestOptions(u);const a=(f.protocol==="https:"?i:s).request;const d=u.signal;let l=null;const h=function abort(){let e=new AbortError("The user aborted a request.");o(e);if(u.body&&u.body instanceof r.Readable){u.body.destroy(e)}if(!l||!l.body)return;l.body.emit("error",e)};if(d&&d.aborted){h();return}const p=function abortAndFinalize(){h();finalize()};const b=a(f);let g;if(d){d.addEventListener("abort",p)}function finalize(){b.abort();if(d)d.removeEventListener("abort",p);clearTimeout(g)}if(u.timeout){b.once("socket",function(e){g=setTimeout(function(){o(new FetchError(`network timeout at: ${u.url}`,"request-timeout"));finalize()},u.timeout)})}b.on("error",function(e){o(new FetchError(`request to ${u.url} failed, reason: ${e.message}`,"system",e));finalize()});b.on("response",function(e){clearTimeout(g);const t=createHeadersLenient(e.headers);if(fetch.isRedirect(e.statusCode)){const r=t.get("Location");const s=r===null?null:x(u.url,r);switch(u.redirect){case"error":o(new FetchError(`uri requested responds with a redirect, redirect mode is set to error: ${u.url}`,"no-redirect"));finalize();return;case"manual":if(s!==null){try{t.set("Location",s)}catch(e){o(e)}}break;case"follow":if(s===null){break}if(u.counter>=u.follow){o(new FetchError(`maximum redirect reached at: ${u.url}`,"max-redirect"));finalize();return}const r={headers:new Headers(u.headers),follow:u.follow,counter:u.counter+1,agent:u.agent,compress:u.compress,method:u.method,body:u.body,signal:u.signal,timeout:u.timeout,size:u.size};if(e.statusCode!==303&&u.body&&getTotalBytes(u)===null){o(new FetchError("Cannot follow redirect with body being a readable stream","unsupported-redirect"));finalize();return}if(e.statusCode===303||(e.statusCode===301||e.statusCode===302)&&u.method==="POST"){r.method="GET";r.body=undefined;r.headers.delete("content-length")}n(fetch(new Request(s,r)));finalize();return}}e.once("end",function(){if(d)d.removeEventListener("abort",p)});let r=e.pipe(new B);const s={url:u.url,status:e.statusCode,statusText:e.statusMessage,headers:t,size:u.size,timeout:u.timeout,counter:u.counter};const i=t.get("Content-Encoding");if(!u.compress||u.method==="HEAD"||i===null||e.statusCode===204||e.statusCode===304){l=new Response(r,s);n(l);return}const f={flush:c.Z_SYNC_FLUSH,finishFlush:c.Z_SYNC_FLUSH};if(i=="gzip"||i=="x-gzip"){r=r.pipe(c.createGunzip(f));l=new Response(r,s);n(l);return}if(i=="deflate"||i=="x-deflate"){const t=e.pipe(new B);t.once("data",function(e){if((e[0]&15)===8){r=r.pipe(c.createInflate())}else{r=r.pipe(c.createInflateRaw())}l=new Response(r,s);n(l)});return}if(i=="br"&&typeof c.createBrotliDecompress==="function"){r=r.pipe(c.createBrotliDecompress());l=new Response(r,s);n(l);return}l=new Response(r,s);n(l)});writeToStream(b,u)})}fetch.isRedirect=function(e){return e===301||e===302||e===303||e===307||e===308};fetch.Promise=global.Promise;e.exports=t=fetch;Object.defineProperty(t,"__esModule",{value:true});t.default=t;t.Headers=Headers;t.Request=Request;t.Response=Response;t.FetchError=FetchError},223:(e,t,n)=>{var r=n(940);e.exports=r(once);e.exports.strict=r(onceStrict);once.proto=once(function(){Object.defineProperty(Function.prototype,"once",{value:function(){return once(this)},configurable:true});Object.defineProperty(Function.prototype,"onceStrict",{value:function(){return onceStrict(this)},configurable:true})});function once(e){var t=function(){if(t.called)return t.value;t.called=true;return t.value=e.apply(this,arguments)};t.called=false;return t}function onceStrict(e){var t=function(){if(t.called)throw new Error(t.onceError);t.called=true;return t.value=e.apply(this,arguments)};var n=e.name||"Function wrapped with `once`";t.onceError=n+" shouldn't be called more than once";t.called=false;return t}},30:(e,t)=>{"use strict";Object.defineProperty(t,"__esModule",{value:true});function getUserAgent(){if(typeof navigator==="object"&&"userAgent"in navigator){return navigator.userAgent}if(typeof process==="object"&&"version"in process){return`Node.js/${process.version.substr(1)} (${process.platform}; ${process.arch})`}return"<environment undetectable>"}t.getUserAgent=getUserAgent},940:e=>{e.exports=wrappy;function wrappy(e,t){if(e&&t)return wrappy(e)(t);if(typeof e!=="function")throw new TypeError("need wrapper function");Object.keys(e).forEach(function(t){wrapper[t]=e[t]});return wrapper;function wrapper(){var t=new Array(arguments.length);for(var n=0;n<t.length;n++){t[n]=arguments[n]}var r=e.apply(this,t);var s=t[t.length-1];if(typeof r==="function"&&r!==s){Object.keys(s).forEach(function(e){r[e]=s[e]})}return r}}},785:module=>{module.exports=eval("require")("@octokit/rest")},877:module=>{module.exports=eval("require")("encoding")},747:e=>{"use strict";e.exports=require("fs")},605:e=>{"use strict";e.exports=require("http")},211:e=>{"use strict";e.exports=require("https")},87:e=>{"use strict";e.exports=require("os")},622:e=>{"use strict";e.exports=require("path")},413:e=>{"use strict";e.exports=require("stream")},835:e=>{"use strict";e.exports=require("url")},761:e=>{"use strict";e.exports=require("zlib")}};var __webpack_module_cache__={};function __webpack_require__(e){if(__webpack_module_cache__[e]){return __webpack_module_cache__[e].exports}var t=__webpack_module_cache__[e]={exports:{}};var n=true;try{__webpack_modules__[e].call(t.exports,t,t.exports,__webpack_require__);n=false}finally{if(n)delete __webpack_module_cache__[e]}return t.exports}__webpack_require__.ab=__dirname+"/";return __webpack_require__(932)})();
+require('./sourcemap-register.js');module.exports =
+/******/ (() => { // webpackBootstrap
+/******/ 	var __webpack_modules__ = ({
+
+/***/ 932:
+/***/ ((__unused_webpack_module, __unused_webpack_exports, __webpack_require__) => {
+
+const core = __webpack_require__(186);
+const github = __webpack_require__(438);
+
+async function run() {
+  try {
+    const baseTokenRegex = new RegExp('%basebranch%', "g");
+    const headTokenRegex = new RegExp('%headbranch%', "g");
+
+    const inputs = {
+      token: core.getInput('repo-token', {required: true}),
+      baseBranchRegex: core.getInput('base-branch-regex'),
+      headBranchRegex: core.getInput('head-branch-regex'),
+      lowercaseBranch: (core.getInput('lowercase-branch').toLowerCase() === 'true'),
+      titleTemplate: core.getInput('title-template'),
+      titleUpdateAction: core.getInput('title-update-action').toLowerCase(),
+      titleInsertSpace: (core.getInput('title-insert-space').toLowerCase() === 'true'),
+      titleUppercaseBaseMatch: (core.getInput('title-uppercase-base-match').toLowerCase() === 'true'),
+      titleUppercaseHeadMatch: (core.getInput('title-uppercase-head-match').toLowerCase() === 'true'),
+      bodyTemplate: core.getInput('body-template'),
+      bodyUpdateAction: core.getInput('body-update-action').toLowerCase(),
+      bodyNewlineCount: parseInt(core.getInput('body-newline-count')),
+      bodyUppercaseBaseMatch: (core.getInput('body-uppercase-base-match').toLowerCase() === 'true'),
+      bodyUppercaseHeadMatch: (core.getInput('body-uppercase-head-match').toLowerCase() === 'true'),
+    }
+
+    const baseBranchRegex = inputs.baseBranchRegex.trim();
+    const matchBaseBranch = baseBranchRegex.length > 0;
+
+    const headBranchRegex = inputs.headBranchRegex.trim();
+    const matchHeadBranch = headBranchRegex.length > 0;
+
+    if (!matchBaseBranch && !matchHeadBranch) {
+      core.setFailed('No branch regex values have been specified');
+      return;
+    }
+
+    const matches = {
+      baseMatch: '',
+      headMatch: '',
+    }
+
+    if (matchBaseBranch) {
+      const baseBranchName = github.context.payload.pull_request.base.ref;
+      const baseBranch = inputs.lowercaseBranch ? baseBranchName.toLowerCase() : baseBranchName;
+      core.info(`Base branch: ${baseBranch}`);
+
+      const baseMatches = baseBranch.match(new RegExp(baseBranchRegex));
+      if (!baseMatches) {
+        core.setFailed('Base branch name does not match given regex');
+        return;
+      }
+
+      matches.baseMatch = baseMatches[0];
+      core.info(`Matched base branch text: ${matches.baseMatch}`);
+
+      core.setOutput('baseMatch', matches.baseMatch);
+    }
+
+    if (matchHeadBranch) {
+      const headBranchName = github.context.payload.pull_request.head.ref;
+      const headBranch = inputs.lowercaseBranch ? headBranchName.toLowerCase() : headBranchName;
+      core.info(`Head branch: ${headBranch}`);
+
+      const headMatches = headBranch.match(new RegExp(headBranchRegex));
+      if (!headMatches) {
+        core.setFailed('Head branch name does not match given regex');
+        return;
+      }
+
+      matches.headMatch = headMatches[0];
+      core.info(`Matched head branch text: ${matches.headMatch}`);
+
+      core.setOutput('headMatch', matches.headMatch);
+    }
+
+    const request = {
+      owner: github.context.repo.owner,
+      repo: github.context.repo.repo,
+      pull_number: github.context.payload.pull_request.number,
+    }
+
+    const upperCase = (upperCase, text) => upperCase ? text.toUpperCase() : text;
+
+    const title = github.context.payload.pull_request.title || '';
+    const processedTitleText = inputs.titleTemplate
+      .replace(baseTokenRegex, upperCase(inputs.titleUppercaseBaseMatch, matches.baseMatch))
+      .replace(headTokenRegex, upperCase(inputs.titleUppercaseHeadMatch, matches.headMatch));
+    core.info(`Processed title text: ${processedTitleText}`);
+
+    const updateTitle = ({
+      prefix: !title.toLowerCase().startsWith(processedTitleText.toLowerCase()),
+      suffix: !title.toLowerCase().endsWith(processedTitleText.toLowerCase()),
+      replace: title.toLowerCase() !== processedTitleText.toLowerCase(),
+    })[inputs.titleUpdateAction] || false;
+
+    core.setOutput('titleUpdated', updateTitle);
+
+    if (updateTitle) {
+      request.title = ({
+        prefix: processedTitleText.concat(inputs.titleInsertSpace ? ' ': '', title),
+        suffix: title.concat(inputs.titleInsertSpace ? ' ': '', processedTitleText),
+        replace: processedTitleText,
+      })[inputs.titleUpdateAction];
+      core.info(`New title: ${request.title}`);
+    } else {
+      core.warning('No updates were made to PR title');
+    }
+
+    const body = github.context.payload.pull_request.body || '';
+    const processedBodyText = inputs.bodyTemplate
+      .replace(baseTokenRegex, upperCase(inputs.bodyUppercaseBaseMatch, matches.baseMatch))
+      .replace(headTokenRegex, upperCase(inputs.bodyUppercaseHeadMatch, matches.headMatch));
+    core.debug(`Processed body text: ${processedBodyText}`);
+
+    const updateBody = ({
+      prefix: !body.toLowerCase().startsWith(processedBodyText.toLowerCase()),
+      suffix: !body.toLowerCase().endsWith(processedBodyText.toLowerCase()),
+      replace: body.toLowerCase() !== processedBodyText.toLowerCase(),
+    })[inputs.bodyUpdateAction] || false;
+
+    core.setOutput('bodyUpdated', updateBody);
+
+    if (updateBody) {
+      request.body = ({
+        prefix: processedBodyText.concat('\n'.repeat(inputs.bodyNewlineCount), body),
+        suffix: body.concat('\n'.repeat(inputs.bodyNewlineCount), processedBodyText),
+        replace: processedBodyText,
+      })[inputs.bodyUpdateAction];
+      core.debug(`New body: ${request.body}`);
+    } else {
+      core.warning('No updates were made to PR body');
+    }
+
+    if (!updateTitle && !updateBody) {
+      return;
+    }
+
+    const client = new github.GitHub(inputs.token);
+    const response = await client.pulls.update(request);
+
+    core.info(`Response: ${response.status}`);
+    if (response.status !== 200) {
+      core.error('Updating the pull request has failed');
+    }
+  }
+  catch (error) {
+    core.error(error);
+    core.setFailed(error.message);
+  }
+}
+
+run()
+
+
+/***/ }),
+
+/***/ 351:
+/***/ ((__unused_webpack_module, exports, __webpack_require__) => {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+const os = __webpack_require__(87);
+/**
+ * Commands
+ *
+ * Command Format:
+ *   ##[name key=value;key=value]message
+ *
+ * Examples:
+ *   ##[warning]This is the user warning message
+ *   ##[set-secret name=mypassword]definitelyNotAPassword!
+ */
+function issueCommand(command, properties, message) {
+    const cmd = new Command(command, properties, message);
+    process.stdout.write(cmd.toString() + os.EOL);
+}
+exports.issueCommand = issueCommand;
+function issue(name, message = '') {
+    issueCommand(name, {}, message);
+}
+exports.issue = issue;
+const CMD_STRING = '::';
+class Command {
+    constructor(command, properties, message) {
+        if (!command) {
+            command = 'missing.command';
+        }
+        this.command = command;
+        this.properties = properties;
+        this.message = message;
+    }
+    toString() {
+        let cmdStr = CMD_STRING + this.command;
+        if (this.properties && Object.keys(this.properties).length > 0) {
+            cmdStr += ' ';
+            for (const key in this.properties) {
+                if (this.properties.hasOwnProperty(key)) {
+                    const val = this.properties[key];
+                    if (val) {
+                        // safely append the val - avoid blowing up when attempting to
+                        // call .replace() if message is not a string for some reason
+                        cmdStr += `${key}=${escape(`${val || ''}`)},`;
+                    }
+                }
+            }
+        }
+        cmdStr += CMD_STRING;
+        // safely append the message - avoid blowing up when attempting to
+        // call .replace() if message is not a string for some reason
+        const message = `${this.message || ''}`;
+        cmdStr += escapeData(message);
+        return cmdStr;
+    }
+}
+function escapeData(s) {
+    return s.replace(/\r/g, '%0D').replace(/\n/g, '%0A');
+}
+function escape(s) {
+    return s
+        .replace(/\r/g, '%0D')
+        .replace(/\n/g, '%0A')
+        .replace(/]/g, '%5D')
+        .replace(/;/g, '%3B');
+}
+//# sourceMappingURL=command.js.map
+
+/***/ }),
+
+/***/ 186:
+/***/ (function(__unused_webpack_module, exports, __webpack_require__) {
+
+"use strict";
+
+var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+const command_1 = __webpack_require__(351);
+const os = __webpack_require__(87);
+const path = __webpack_require__(622);
+/**
+ * The code to exit an action
+ */
+var ExitCode;
+(function (ExitCode) {
+    /**
+     * A code indicating that the action was successful
+     */
+    ExitCode[ExitCode["Success"] = 0] = "Success";
+    /**
+     * A code indicating that the action was a failure
+     */
+    ExitCode[ExitCode["Failure"] = 1] = "Failure";
+})(ExitCode = exports.ExitCode || (exports.ExitCode = {}));
+//-----------------------------------------------------------------------
+// Variables
+//-----------------------------------------------------------------------
+/**
+ * Sets env variable for this action and future actions in the job
+ * @param name the name of the variable to set
+ * @param val the value of the variable
+ */
+function exportVariable(name, val) {
+    process.env[name] = val;
+    command_1.issueCommand('set-env', { name }, val);
+}
+exports.exportVariable = exportVariable;
+/**
+ * Registers a secret which will get masked from logs
+ * @param secret value of the secret
+ */
+function setSecret(secret) {
+    command_1.issueCommand('add-mask', {}, secret);
+}
+exports.setSecret = setSecret;
+/**
+ * Prepends inputPath to the PATH (for this action and future actions)
+ * @param inputPath
+ */
+function addPath(inputPath) {
+    command_1.issueCommand('add-path', {}, inputPath);
+    process.env['PATH'] = `${inputPath}${path.delimiter}${process.env['PATH']}`;
+}
+exports.addPath = addPath;
+/**
+ * Gets the value of an input.  The value is also trimmed.
+ *
+ * @param     name     name of the input to get
+ * @param     options  optional. See InputOptions.
+ * @returns   string
+ */
+function getInput(name, options) {
+    const val = process.env[`INPUT_${name.replace(/ /g, '_').toUpperCase()}`] || '';
+    if (options && options.required && !val) {
+        throw new Error(`Input required and not supplied: ${name}`);
+    }
+    return val.trim();
+}
+exports.getInput = getInput;
+/**
+ * Sets the value of an output.
+ *
+ * @param     name     name of the output to set
+ * @param     value    value to store
+ */
+function setOutput(name, value) {
+    command_1.issueCommand('set-output', { name }, value);
+}
+exports.setOutput = setOutput;
+//-----------------------------------------------------------------------
+// Results
+//-----------------------------------------------------------------------
+/**
+ * Sets the action status to failed.
+ * When the action exits it will be with an exit code of 1
+ * @param message add error issue message
+ */
+function setFailed(message) {
+    process.exitCode = ExitCode.Failure;
+    error(message);
+}
+exports.setFailed = setFailed;
+//-----------------------------------------------------------------------
+// Logging Commands
+//-----------------------------------------------------------------------
+/**
+ * Writes debug message to user log
+ * @param message debug message
+ */
+function debug(message) {
+    command_1.issueCommand('debug', {}, message);
+}
+exports.debug = debug;
+/**
+ * Adds an error issue
+ * @param message error issue message
+ */
+function error(message) {
+    command_1.issue('error', message);
+}
+exports.error = error;
+/**
+ * Adds an warning issue
+ * @param message warning issue message
+ */
+function warning(message) {
+    command_1.issue('warning', message);
+}
+exports.warning = warning;
+/**
+ * Writes info to log with console.log.
+ * @param message info message
+ */
+function info(message) {
+    process.stdout.write(message + os.EOL);
+}
+exports.info = info;
+/**
+ * Begin an output group.
+ *
+ * Output until the next `groupEnd` will be foldable in this group
+ *
+ * @param name The name of the output group
+ */
+function startGroup(name) {
+    command_1.issue('group', name);
+}
+exports.startGroup = startGroup;
+/**
+ * End an output group.
+ */
+function endGroup() {
+    command_1.issue('endgroup');
+}
+exports.endGroup = endGroup;
+/**
+ * Wrap an asynchronous function call in a group.
+ *
+ * Returns the same type as the function itself.
+ *
+ * @param name The name of the group
+ * @param fn The function to wrap in the group
+ */
+function group(name, fn) {
+    return __awaiter(this, void 0, void 0, function* () {
+        startGroup(name);
+        let result;
+        try {
+            result = yield fn();
+        }
+        finally {
+            endGroup();
+        }
+        return result;
+    });
+}
+exports.group = group;
+//# sourceMappingURL=core.js.map
+
+/***/ }),
+
+/***/ 53:
+/***/ ((__unused_webpack_module, exports, __webpack_require__) => {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+const fs_1 = __webpack_require__(747);
+const os_1 = __webpack_require__(87);
+class Context {
+    /**
+     * Hydrate the context from the environment
+     */
+    constructor() {
+        this.payload = {};
+        if (process.env.GITHUB_EVENT_PATH) {
+            if (fs_1.existsSync(process.env.GITHUB_EVENT_PATH)) {
+                this.payload = JSON.parse(fs_1.readFileSync(process.env.GITHUB_EVENT_PATH, { encoding: 'utf8' }));
+            }
+            else {
+                process.stdout.write(`GITHUB_EVENT_PATH ${process.env.GITHUB_EVENT_PATH} does not exist${os_1.EOL}`);
+            }
+        }
+        this.eventName = process.env.GITHUB_EVENT_NAME;
+        this.sha = process.env.GITHUB_SHA;
+        this.ref = process.env.GITHUB_REF;
+        this.workflow = process.env.GITHUB_WORKFLOW;
+        this.action = process.env.GITHUB_ACTION;
+        this.actor = process.env.GITHUB_ACTOR;
+    }
+    get issue() {
+        const payload = this.payload;
+        return Object.assign(Object.assign({}, this.repo), { number: (payload.issue || payload.pullRequest || payload).number });
+    }
+    get repo() {
+        if (process.env.GITHUB_REPOSITORY) {
+            const [owner, repo] = process.env.GITHUB_REPOSITORY.split('/');
+            return { owner, repo };
+        }
+        if (this.payload.repository) {
+            return {
+                owner: this.payload.repository.owner.login,
+                repo: this.payload.repository.name
+            };
+        }
+        throw new Error("context.repo requires a GITHUB_REPOSITORY environment variable like 'owner/repo'");
+    }
+}
+exports.Context = Context;
+//# sourceMappingURL=context.js.map
+
+/***/ }),
+
+/***/ 438:
+/***/ (function(__unused_webpack_module, exports, __webpack_require__) {
+
+"use strict";
+
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+var __importStar = (this && this.__importStar) || function (mod) {
+    if (mod && mod.__esModule) return mod;
+    var result = {};
+    if (mod != null) for (var k in mod) if (Object.hasOwnProperty.call(mod, k)) result[k] = mod[k];
+    result["default"] = mod;
+    return result;
+};
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+// Originally pulled from https://github.com/JasonEtco/actions-toolkit/blob/master/src/github.ts
+const graphql_1 = __webpack_require__(467);
+const rest_1 = __importDefault(__webpack_require__(785));
+const Context = __importStar(__webpack_require__(53));
+// We need this in order to extend Octokit
+rest_1.default.prototype = new rest_1.default();
+exports.context = new Context.Context();
+class GitHub extends rest_1.default {
+    constructor(token, opts = {}) {
+        super(Object.assign(Object.assign({}, opts), { auth: `token ${token}` }));
+        this.graphql = graphql_1.defaults({
+            headers: { authorization: `token ${token}` }
+        });
+    }
+}
+exports.GitHub = GitHub;
+//# sourceMappingURL=github.js.map
+
+/***/ }),
+
+/***/ 440:
+/***/ ((__unused_webpack_module, exports, __webpack_require__) => {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+
+var isPlainObject = __webpack_require__(558);
+var universalUserAgent = __webpack_require__(30);
+
+function lowercaseKeys(object) {
+  if (!object) {
+    return {};
+  }
+
+  return Object.keys(object).reduce((newObj, key) => {
+    newObj[key.toLowerCase()] = object[key];
+    return newObj;
+  }, {});
+}
+
+function mergeDeep(defaults, options) {
+  const result = Object.assign({}, defaults);
+  Object.keys(options).forEach(key => {
+    if (isPlainObject.isPlainObject(options[key])) {
+      if (!(key in defaults)) Object.assign(result, {
+        [key]: options[key]
+      });else result[key] = mergeDeep(defaults[key], options[key]);
+    } else {
+      Object.assign(result, {
+        [key]: options[key]
+      });
+    }
+  });
+  return result;
+}
+
+function removeUndefinedProperties(obj) {
+  for (const key in obj) {
+    if (obj[key] === undefined) {
+      delete obj[key];
+    }
+  }
+
+  return obj;
+}
+
+function merge(defaults, route, options) {
+  if (typeof route === "string") {
+    let [method, url] = route.split(" ");
+    options = Object.assign(url ? {
+      method,
+      url
+    } : {
+      url: method
+    }, options);
+  } else {
+    options = Object.assign({}, route);
+  } // lowercase header names before merging with defaults to avoid duplicates
+
+
+  options.headers = lowercaseKeys(options.headers); // remove properties with undefined values before merging
+
+  removeUndefinedProperties(options);
+  removeUndefinedProperties(options.headers);
+  const mergedOptions = mergeDeep(defaults || {}, options); // mediaType.previews arrays are merged, instead of overwritten
+
+  if (defaults && defaults.mediaType.previews.length) {
+    mergedOptions.mediaType.previews = defaults.mediaType.previews.filter(preview => !mergedOptions.mediaType.previews.includes(preview)).concat(mergedOptions.mediaType.previews);
+  }
+
+  mergedOptions.mediaType.previews = mergedOptions.mediaType.previews.map(preview => preview.replace(/-preview/, ""));
+  return mergedOptions;
+}
+
+function addQueryParameters(url, parameters) {
+  const separator = /\?/.test(url) ? "&" : "?";
+  const names = Object.keys(parameters);
+
+  if (names.length === 0) {
+    return url;
+  }
+
+  return url + separator + names.map(name => {
+    if (name === "q") {
+      return "q=" + parameters.q.split("+").map(encodeURIComponent).join("+");
+    }
+
+    return `${name}=${encodeURIComponent(parameters[name])}`;
+  }).join("&");
+}
+
+const urlVariableRegex = /\{[^}]+\}/g;
+
+function removeNonChars(variableName) {
+  return variableName.replace(/^\W+|\W+$/g, "").split(/,/);
+}
+
+function extractUrlVariableNames(url) {
+  const matches = url.match(urlVariableRegex);
+
+  if (!matches) {
+    return [];
+  }
+
+  return matches.map(removeNonChars).reduce((a, b) => a.concat(b), []);
+}
+
+function omit(object, keysToOmit) {
+  return Object.keys(object).filter(option => !keysToOmit.includes(option)).reduce((obj, key) => {
+    obj[key] = object[key];
+    return obj;
+  }, {});
+}
+
+// Based on https://github.com/bramstein/url-template, licensed under BSD
+// TODO: create separate package.
+//
+// Copyright (c) 2012-2014, Bram Stein
+// All rights reserved.
+// Redistribution and use in source and binary forms, with or without
+// modification, are permitted provided that the following conditions
+// are met:
+//  1. Redistributions of source code must retain the above copyright
+//     notice, this list of conditions and the following disclaimer.
+//  2. Redistributions in binary form must reproduce the above copyright
+//     notice, this list of conditions and the following disclaimer in the
+//     documentation and/or other materials provided with the distribution.
+//  3. The name of the author may not be used to endorse or promote products
+//     derived from this software without specific prior written permission.
+// THIS SOFTWARE IS PROVIDED BY THE AUTHOR "AS IS" AND ANY EXPRESS OR IMPLIED
+// WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
+// MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO
+// EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT,
+// INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING,
+// BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
+// DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
+// OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING
+// NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE,
+// EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+/* istanbul ignore file */
+function encodeReserved(str) {
+  return str.split(/(%[0-9A-Fa-f]{2})/g).map(function (part) {
+    if (!/%[0-9A-Fa-f]/.test(part)) {
+      part = encodeURI(part).replace(/%5B/g, "[").replace(/%5D/g, "]");
+    }
+
+    return part;
+  }).join("");
+}
+
+function encodeUnreserved(str) {
+  return encodeURIComponent(str).replace(/[!'()*]/g, function (c) {
+    return "%" + c.charCodeAt(0).toString(16).toUpperCase();
+  });
+}
+
+function encodeValue(operator, value, key) {
+  value = operator === "+" || operator === "#" ? encodeReserved(value) : encodeUnreserved(value);
+
+  if (key) {
+    return encodeUnreserved(key) + "=" + value;
+  } else {
+    return value;
+  }
+}
+
+function isDefined(value) {
+  return value !== undefined && value !== null;
+}
+
+function isKeyOperator(operator) {
+  return operator === ";" || operator === "&" || operator === "?";
+}
+
+function getValues(context, operator, key, modifier) {
+  var value = context[key],
+      result = [];
+
+  if (isDefined(value) && value !== "") {
+    if (typeof value === "string" || typeof value === "number" || typeof value === "boolean") {
+      value = value.toString();
+
+      if (modifier && modifier !== "*") {
+        value = value.substring(0, parseInt(modifier, 10));
+      }
+
+      result.push(encodeValue(operator, value, isKeyOperator(operator) ? key : ""));
+    } else {
+      if (modifier === "*") {
+        if (Array.isArray(value)) {
+          value.filter(isDefined).forEach(function (value) {
+            result.push(encodeValue(operator, value, isKeyOperator(operator) ? key : ""));
+          });
+        } else {
+          Object.keys(value).forEach(function (k) {
+            if (isDefined(value[k])) {
+              result.push(encodeValue(operator, value[k], k));
+            }
+          });
+        }
+      } else {
+        const tmp = [];
+
+        if (Array.isArray(value)) {
+          value.filter(isDefined).forEach(function (value) {
+            tmp.push(encodeValue(operator, value));
+          });
+        } else {
+          Object.keys(value).forEach(function (k) {
+            if (isDefined(value[k])) {
+              tmp.push(encodeUnreserved(k));
+              tmp.push(encodeValue(operator, value[k].toString()));
+            }
+          });
+        }
+
+        if (isKeyOperator(operator)) {
+          result.push(encodeUnreserved(key) + "=" + tmp.join(","));
+        } else if (tmp.length !== 0) {
+          result.push(tmp.join(","));
+        }
+      }
+    }
+  } else {
+    if (operator === ";") {
+      if (isDefined(value)) {
+        result.push(encodeUnreserved(key));
+      }
+    } else if (value === "" && (operator === "&" || operator === "?")) {
+      result.push(encodeUnreserved(key) + "=");
+    } else if (value === "") {
+      result.push("");
+    }
+  }
+
+  return result;
+}
+
+function parseUrl(template) {
+  return {
+    expand: expand.bind(null, template)
+  };
+}
+
+function expand(template, context) {
+  var operators = ["+", "#", ".", "/", ";", "?", "&"];
+  return template.replace(/\{([^\{\}]+)\}|([^\{\}]+)/g, function (_, expression, literal) {
+    if (expression) {
+      let operator = "";
+      const values = [];
+
+      if (operators.indexOf(expression.charAt(0)) !== -1) {
+        operator = expression.charAt(0);
+        expression = expression.substr(1);
+      }
+
+      expression.split(/,/g).forEach(function (variable) {
+        var tmp = /([^:\*]*)(?::(\d+)|(\*))?/.exec(variable);
+        values.push(getValues(context, operator, tmp[1], tmp[2] || tmp[3]));
+      });
+
+      if (operator && operator !== "+") {
+        var separator = ",";
+
+        if (operator === "?") {
+          separator = "&";
+        } else if (operator !== "#") {
+          separator = operator;
+        }
+
+        return (values.length !== 0 ? operator : "") + values.join(separator);
+      } else {
+        return values.join(",");
+      }
+    } else {
+      return encodeReserved(literal);
+    }
+  });
+}
+
+function parse(options) {
+  // https://fetch.spec.whatwg.org/#methods
+  let method = options.method.toUpperCase(); // replace :varname with {varname} to make it RFC 6570 compatible
+
+  let url = (options.url || "/").replace(/:([a-z]\w+)/g, "{$1}");
+  let headers = Object.assign({}, options.headers);
+  let body;
+  let parameters = omit(options, ["method", "baseUrl", "url", "headers", "request", "mediaType"]); // extract variable names from URL to calculate remaining variables later
+
+  const urlVariableNames = extractUrlVariableNames(url);
+  url = parseUrl(url).expand(parameters);
+
+  if (!/^http/.test(url)) {
+    url = options.baseUrl + url;
+  }
+
+  const omittedParameters = Object.keys(options).filter(option => urlVariableNames.includes(option)).concat("baseUrl");
+  const remainingParameters = omit(parameters, omittedParameters);
+  const isBinaryRequest = /application\/octet-stream/i.test(headers.accept);
+
+  if (!isBinaryRequest) {
+    if (options.mediaType.format) {
+      // e.g. application/vnd.github.v3+json => application/vnd.github.v3.raw
+      headers.accept = headers.accept.split(/,/).map(preview => preview.replace(/application\/vnd(\.\w+)(\.v3)?(\.\w+)?(\+json)?$/, `application/vnd$1$2.${options.mediaType.format}`)).join(",");
+    }
+
+    if (options.mediaType.previews.length) {
+      const previewsFromAcceptHeader = headers.accept.match(/[\w-]+(?=-preview)/g) || [];
+      headers.accept = previewsFromAcceptHeader.concat(options.mediaType.previews).map(preview => {
+        const format = options.mediaType.format ? `.${options.mediaType.format}` : "+json";
+        return `application/vnd.github.${preview}-preview${format}`;
+      }).join(",");
+    }
+  } // for GET/HEAD requests, set URL query parameters from remaining parameters
+  // for PATCH/POST/PUT/DELETE requests, set request body from remaining parameters
+
+
+  if (["GET", "HEAD"].includes(method)) {
+    url = addQueryParameters(url, remainingParameters);
+  } else {
+    if ("data" in remainingParameters) {
+      body = remainingParameters.data;
+    } else {
+      if (Object.keys(remainingParameters).length) {
+        body = remainingParameters;
+      } else {
+        headers["content-length"] = 0;
+      }
+    }
+  } // default content-type for JSON if body is set
+
+
+  if (!headers["content-type"] && typeof body !== "undefined") {
+    headers["content-type"] = "application/json; charset=utf-8";
+  } // GitHub expects 'content-length: 0' header for PUT/PATCH requests without body.
+  // fetch does not allow to set `content-length` header, but we can set body to an empty string
+
+
+  if (["PATCH", "PUT"].includes(method) && typeof body === "undefined") {
+    body = "";
+  } // Only return body/request keys if present
+
+
+  return Object.assign({
+    method,
+    url,
+    headers
+  }, typeof body !== "undefined" ? {
+    body
+  } : null, options.request ? {
+    request: options.request
+  } : null);
+}
+
+function endpointWithDefaults(defaults, route, options) {
+  return parse(merge(defaults, route, options));
+}
+
+function withDefaults(oldDefaults, newDefaults) {
+  const DEFAULTS = merge(oldDefaults, newDefaults);
+  const endpoint = endpointWithDefaults.bind(null, DEFAULTS);
+  return Object.assign(endpoint, {
+    DEFAULTS,
+    defaults: withDefaults.bind(null, DEFAULTS),
+    merge: merge.bind(null, DEFAULTS),
+    parse
+  });
+}
+
+const VERSION = "6.0.8";
+
+const userAgent = `octokit-endpoint.js/${VERSION} ${universalUserAgent.getUserAgent()}`; // DEFAULTS has all properties set that EndpointOptions has, except url.
+// So we use RequestParameters and add method as additional required property.
+
+const DEFAULTS = {
+  method: "GET",
+  baseUrl: "https://api.github.com",
+  headers: {
+    accept: "application/vnd.github.v3+json",
+    "user-agent": userAgent
+  },
+  mediaType: {
+    format: "",
+    previews: []
+  }
+};
+
+const endpoint = withDefaults(null, DEFAULTS);
+
+exports.endpoint = endpoint;
+//# sourceMappingURL=index.js.map
+
+
+/***/ }),
+
+/***/ 558:
+/***/ ((__unused_webpack_module, exports) => {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+
+/*!
+ * is-plain-object <https://github.com/jonschlinkert/is-plain-object>
+ *
+ * Copyright (c) 2014-2017, Jon Schlinkert.
+ * Released under the MIT License.
+ */
+
+function isObject(o) {
+  return Object.prototype.toString.call(o) === '[object Object]';
+}
+
+function isPlainObject(o) {
+  var ctor,prot;
+
+  if (isObject(o) === false) return false;
+
+  // If has modified constructor
+  ctor = o.constructor;
+  if (ctor === undefined) return true;
+
+  // If has modified prototype
+  prot = ctor.prototype;
+  if (isObject(prot) === false) return false;
+
+  // If constructor does not have an Object-specific method
+  if (prot.hasOwnProperty('isPrototypeOf') === false) {
+    return false;
+  }
+
+  // Most likely a plain Object
+  return true;
+}
+
+exports.isPlainObject = isPlainObject;
+
+
+/***/ }),
+
+/***/ 467:
+/***/ ((__unused_webpack_module, exports, __webpack_require__) => {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+
+var request = __webpack_require__(234);
+var universalUserAgent = __webpack_require__(30);
+
+const VERSION = "4.5.6";
+
+class GraphqlError extends Error {
+  constructor(request, response) {
+    const message = response.data.errors[0].message;
+    super(message);
+    Object.assign(this, response.data);
+    Object.assign(this, {
+      headers: response.headers
+    });
+    this.name = "GraphqlError";
+    this.request = request; // Maintains proper stack trace (only available on V8)
+
+    /* istanbul ignore next */
+
+    if (Error.captureStackTrace) {
+      Error.captureStackTrace(this, this.constructor);
+    }
+  }
+
+}
+
+const NON_VARIABLE_OPTIONS = ["method", "baseUrl", "url", "headers", "request", "query", "mediaType"];
+const GHES_V3_SUFFIX_REGEX = /\/api\/v3\/?$/;
+function graphql(request, query, options) {
+  if (typeof query === "string" && options && "query" in options) {
+    return Promise.reject(new Error(`[@octokit/graphql] "query" cannot be used as variable name`));
+  }
+
+  const parsedOptions = typeof query === "string" ? Object.assign({
+    query
+  }, options) : query;
+  const requestOptions = Object.keys(parsedOptions).reduce((result, key) => {
+    if (NON_VARIABLE_OPTIONS.includes(key)) {
+      result[key] = parsedOptions[key];
+      return result;
+    }
+
+    if (!result.variables) {
+      result.variables = {};
+    }
+
+    result.variables[key] = parsedOptions[key];
+    return result;
+  }, {}); // workaround for GitHub Enterprise baseUrl set with /api/v3 suffix
+  // https://github.com/octokit/auth-app.js/issues/111#issuecomment-657610451
+
+  const baseUrl = parsedOptions.baseUrl || request.endpoint.DEFAULTS.baseUrl;
+
+  if (GHES_V3_SUFFIX_REGEX.test(baseUrl)) {
+    requestOptions.url = baseUrl.replace(GHES_V3_SUFFIX_REGEX, "/api/graphql");
+  }
+
+  return request(requestOptions).then(response => {
+    if (response.data.errors) {
+      const headers = {};
+
+      for (const key of Object.keys(response.headers)) {
+        headers[key] = response.headers[key];
+      }
+
+      throw new GraphqlError(requestOptions, {
+        headers,
+        data: response.data
+      });
+    }
+
+    return response.data.data;
+  });
+}
+
+function withDefaults(request$1, newDefaults) {
+  const newRequest = request$1.defaults(newDefaults);
+
+  const newApi = (query, options) => {
+    return graphql(newRequest, query, options);
+  };
+
+  return Object.assign(newApi, {
+    defaults: withDefaults.bind(null, newRequest),
+    endpoint: request.request.endpoint
+  });
+}
+
+const graphql$1 = withDefaults(request.request, {
+  headers: {
+    "user-agent": `octokit-graphql.js/${VERSION} ${universalUserAgent.getUserAgent()}`
+  },
+  method: "POST",
+  url: "/graphql"
+});
+function withCustomRequest(customRequest) {
+  return withDefaults(customRequest, {
+    method: "POST",
+    url: "/graphql"
+  });
+}
+
+exports.graphql = graphql$1;
+exports.withCustomRequest = withCustomRequest;
+//# sourceMappingURL=index.js.map
+
+
+/***/ }),
+
+/***/ 537:
+/***/ ((__unused_webpack_module, exports, __webpack_require__) => {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+
+function _interopDefault (ex) { return (ex && (typeof ex === 'object') && 'default' in ex) ? ex['default'] : ex; }
+
+var deprecation = __webpack_require__(670);
+var once = _interopDefault(__webpack_require__(223));
+
+const logOnce = once(deprecation => console.warn(deprecation));
+/**
+ * Error with extra properties to help with debugging
+ */
+
+class RequestError extends Error {
+  constructor(message, statusCode, options) {
+    super(message); // Maintains proper stack trace (only available on V8)
+
+    /* istanbul ignore next */
+
+    if (Error.captureStackTrace) {
+      Error.captureStackTrace(this, this.constructor);
+    }
+
+    this.name = "HttpError";
+    this.status = statusCode;
+    Object.defineProperty(this, "code", {
+      get() {
+        logOnce(new deprecation.Deprecation("[@octokit/request-error] `error.code` is deprecated, use `error.status`."));
+        return statusCode;
+      }
+
+    });
+    this.headers = options.headers || {}; // redact request credentials without mutating original request options
+
+    const requestCopy = Object.assign({}, options.request);
+
+    if (options.request.headers.authorization) {
+      requestCopy.headers = Object.assign({}, options.request.headers, {
+        authorization: options.request.headers.authorization.replace(/ .*$/, " [REDACTED]")
+      });
+    }
+
+    requestCopy.url = requestCopy.url // client_id & client_secret can be passed as URL query parameters to increase rate limit
+    // see https://developer.github.com/v3/#increasing-the-unauthenticated-rate-limit-for-oauth-applications
+    .replace(/\bclient_secret=\w+/g, "client_secret=[REDACTED]") // OAuth tokens can be passed as URL query parameters, although it is not recommended
+    // see https://developer.github.com/v3/#oauth2-token-sent-in-a-header
+    .replace(/\baccess_token=\w+/g, "access_token=[REDACTED]");
+    this.request = requestCopy;
+  }
+
+}
+
+exports.RequestError = RequestError;
+//# sourceMappingURL=index.js.map
+
+
+/***/ }),
+
+/***/ 234:
+/***/ ((__unused_webpack_module, exports, __webpack_require__) => {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+
+function _interopDefault (ex) { return (ex && (typeof ex === 'object') && 'default' in ex) ? ex['default'] : ex; }
+
+var endpoint = __webpack_require__(440);
+var universalUserAgent = __webpack_require__(30);
+var isPlainObject = __webpack_require__(62);
+var nodeFetch = _interopDefault(__webpack_require__(419));
+var requestError = __webpack_require__(537);
+
+const VERSION = "5.4.9";
+
+function getBufferResponse(response) {
+  return response.arrayBuffer();
+}
+
+function fetchWrapper(requestOptions) {
+  if (isPlainObject.isPlainObject(requestOptions.body) || Array.isArray(requestOptions.body)) {
+    requestOptions.body = JSON.stringify(requestOptions.body);
+  }
+
+  let headers = {};
+  let status;
+  let url;
+  const fetch = requestOptions.request && requestOptions.request.fetch || nodeFetch;
+  return fetch(requestOptions.url, Object.assign({
+    method: requestOptions.method,
+    body: requestOptions.body,
+    headers: requestOptions.headers,
+    redirect: requestOptions.redirect
+  }, requestOptions.request)).then(response => {
+    url = response.url;
+    status = response.status;
+
+    for (const keyAndValue of response.headers) {
+      headers[keyAndValue[0]] = keyAndValue[1];
+    }
+
+    if (status === 204 || status === 205) {
+      return;
+    } // GitHub API returns 200 for HEAD requests
+
+
+    if (requestOptions.method === "HEAD") {
+      if (status < 400) {
+        return;
+      }
+
+      throw new requestError.RequestError(response.statusText, status, {
+        headers,
+        request: requestOptions
+      });
+    }
+
+    if (status === 304) {
+      throw new requestError.RequestError("Not modified", status, {
+        headers,
+        request: requestOptions
+      });
+    }
+
+    if (status >= 400) {
+      return response.text().then(message => {
+        const error = new requestError.RequestError(message, status, {
+          headers,
+          request: requestOptions
+        });
+
+        try {
+          let responseBody = JSON.parse(error.message);
+          Object.assign(error, responseBody);
+          let errors = responseBody.errors; // Assumption `errors` would always be in Array format
+
+          error.message = error.message + ": " + errors.map(JSON.stringify).join(", ");
+        } catch (e) {// ignore, see octokit/rest.js#684
+        }
+
+        throw error;
+      });
+    }
+
+    const contentType = response.headers.get("content-type");
+
+    if (/application\/json/.test(contentType)) {
+      return response.json();
+    }
+
+    if (!contentType || /^text\/|charset=utf-8$/.test(contentType)) {
+      return response.text();
+    }
+
+    return getBufferResponse(response);
+  }).then(data => {
+    return {
+      status,
+      url,
+      headers,
+      data
+    };
+  }).catch(error => {
+    if (error instanceof requestError.RequestError) {
+      throw error;
+    }
+
+    throw new requestError.RequestError(error.message, 500, {
+      headers,
+      request: requestOptions
+    });
+  });
+}
+
+function withDefaults(oldEndpoint, newDefaults) {
+  const endpoint = oldEndpoint.defaults(newDefaults);
+
+  const newApi = function (route, parameters) {
+    const endpointOptions = endpoint.merge(route, parameters);
+
+    if (!endpointOptions.request || !endpointOptions.request.hook) {
+      return fetchWrapper(endpoint.parse(endpointOptions));
+    }
+
+    const request = (route, parameters) => {
+      return fetchWrapper(endpoint.parse(endpoint.merge(route, parameters)));
+    };
+
+    Object.assign(request, {
+      endpoint,
+      defaults: withDefaults.bind(null, endpoint)
+    });
+    return endpointOptions.request.hook(request, endpointOptions);
+  };
+
+  return Object.assign(newApi, {
+    endpoint,
+    defaults: withDefaults.bind(null, endpoint)
+  });
+}
+
+const request = withDefaults(endpoint.endpoint, {
+  headers: {
+    "user-agent": `octokit-request.js/${VERSION} ${universalUserAgent.getUserAgent()}`
+  }
+});
+
+exports.request = request;
+//# sourceMappingURL=index.js.map
+
+
+/***/ }),
+
+/***/ 62:
+/***/ ((__unused_webpack_module, exports) => {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+
+/*!
+ * is-plain-object <https://github.com/jonschlinkert/is-plain-object>
+ *
+ * Copyright (c) 2014-2017, Jon Schlinkert.
+ * Released under the MIT License.
+ */
+
+function isObject(o) {
+  return Object.prototype.toString.call(o) === '[object Object]';
+}
+
+function isPlainObject(o) {
+  var ctor,prot;
+
+  if (isObject(o) === false) return false;
+
+  // If has modified constructor
+  ctor = o.constructor;
+  if (ctor === undefined) return true;
+
+  // If has modified prototype
+  prot = ctor.prototype;
+  if (isObject(prot) === false) return false;
+
+  // If constructor does not have an Object-specific method
+  if (prot.hasOwnProperty('isPrototypeOf') === false) {
+    return false;
+  }
+
+  // Most likely a plain Object
+  return true;
+}
+
+exports.isPlainObject = isPlainObject;
+
+
+/***/ }),
+
+/***/ 670:
+/***/ ((__unused_webpack_module, exports) => {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+
+class Deprecation extends Error {
+  constructor(message) {
+    super(message); // Maintains proper stack trace (only available on V8)
+
+    /* istanbul ignore next */
+
+    if (Error.captureStackTrace) {
+      Error.captureStackTrace(this, this.constructor);
+    }
+
+    this.name = 'Deprecation';
+  }
+
+}
+
+exports.Deprecation = Deprecation;
+
+
+/***/ }),
+
+/***/ 419:
+/***/ ((module, exports, __webpack_require__) => {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+
+function _interopDefault (ex) { return (ex && (typeof ex === 'object') && 'default' in ex) ? ex['default'] : ex; }
+
+var Stream = _interopDefault(__webpack_require__(413));
+var http = _interopDefault(__webpack_require__(605));
+var Url = _interopDefault(__webpack_require__(835));
+var https = _interopDefault(__webpack_require__(211));
+var zlib = _interopDefault(__webpack_require__(761));
+
+// Based on https://github.com/tmpvar/jsdom/blob/aa85b2abf07766ff7bf5c1f6daafb3726f2f2db5/lib/jsdom/living/blob.js
+
+// fix for "Readable" isn't a named export issue
+const Readable = Stream.Readable;
+
+const BUFFER = Symbol('buffer');
+const TYPE = Symbol('type');
+
+class Blob {
+	constructor() {
+		this[TYPE] = '';
+
+		const blobParts = arguments[0];
+		const options = arguments[1];
+
+		const buffers = [];
+		let size = 0;
+
+		if (blobParts) {
+			const a = blobParts;
+			const length = Number(a.length);
+			for (let i = 0; i < length; i++) {
+				const element = a[i];
+				let buffer;
+				if (element instanceof Buffer) {
+					buffer = element;
+				} else if (ArrayBuffer.isView(element)) {
+					buffer = Buffer.from(element.buffer, element.byteOffset, element.byteLength);
+				} else if (element instanceof ArrayBuffer) {
+					buffer = Buffer.from(element);
+				} else if (element instanceof Blob) {
+					buffer = element[BUFFER];
+				} else {
+					buffer = Buffer.from(typeof element === 'string' ? element : String(element));
+				}
+				size += buffer.length;
+				buffers.push(buffer);
+			}
+		}
+
+		this[BUFFER] = Buffer.concat(buffers);
+
+		let type = options && options.type !== undefined && String(options.type).toLowerCase();
+		if (type && !/[^\u0020-\u007E]/.test(type)) {
+			this[TYPE] = type;
+		}
+	}
+	get size() {
+		return this[BUFFER].length;
+	}
+	get type() {
+		return this[TYPE];
+	}
+	text() {
+		return Promise.resolve(this[BUFFER].toString());
+	}
+	arrayBuffer() {
+		const buf = this[BUFFER];
+		const ab = buf.buffer.slice(buf.byteOffset, buf.byteOffset + buf.byteLength);
+		return Promise.resolve(ab);
+	}
+	stream() {
+		const readable = new Readable();
+		readable._read = function () {};
+		readable.push(this[BUFFER]);
+		readable.push(null);
+		return readable;
+	}
+	toString() {
+		return '[object Blob]';
+	}
+	slice() {
+		const size = this.size;
+
+		const start = arguments[0];
+		const end = arguments[1];
+		let relativeStart, relativeEnd;
+		if (start === undefined) {
+			relativeStart = 0;
+		} else if (start < 0) {
+			relativeStart = Math.max(size + start, 0);
+		} else {
+			relativeStart = Math.min(start, size);
+		}
+		if (end === undefined) {
+			relativeEnd = size;
+		} else if (end < 0) {
+			relativeEnd = Math.max(size + end, 0);
+		} else {
+			relativeEnd = Math.min(end, size);
+		}
+		const span = Math.max(relativeEnd - relativeStart, 0);
+
+		const buffer = this[BUFFER];
+		const slicedBuffer = buffer.slice(relativeStart, relativeStart + span);
+		const blob = new Blob([], { type: arguments[2] });
+		blob[BUFFER] = slicedBuffer;
+		return blob;
+	}
+}
+
+Object.defineProperties(Blob.prototype, {
+	size: { enumerable: true },
+	type: { enumerable: true },
+	slice: { enumerable: true }
+});
+
+Object.defineProperty(Blob.prototype, Symbol.toStringTag, {
+	value: 'Blob',
+	writable: false,
+	enumerable: false,
+	configurable: true
+});
+
+/**
+ * fetch-error.js
+ *
+ * FetchError interface for operational errors
+ */
+
+/**
+ * Create FetchError instance
+ *
+ * @param   String      message      Error message for human
+ * @param   String      type         Error type for machine
+ * @param   String      systemError  For Node.js system error
+ * @return  FetchError
+ */
+function FetchError(message, type, systemError) {
+  Error.call(this, message);
+
+  this.message = message;
+  this.type = type;
+
+  // when err.type is `system`, err.code contains system error code
+  if (systemError) {
+    this.code = this.errno = systemError.code;
+  }
+
+  // hide custom error implementation details from end-users
+  Error.captureStackTrace(this, this.constructor);
+}
+
+FetchError.prototype = Object.create(Error.prototype);
+FetchError.prototype.constructor = FetchError;
+FetchError.prototype.name = 'FetchError';
+
+let convert;
+try {
+	convert = __webpack_require__(877).convert;
+} catch (e) {}
+
+const INTERNALS = Symbol('Body internals');
+
+// fix an issue where "PassThrough" isn't a named export for node <10
+const PassThrough = Stream.PassThrough;
+
+/**
+ * Body mixin
+ *
+ * Ref: https://fetch.spec.whatwg.org/#body
+ *
+ * @param   Stream  body  Readable stream
+ * @param   Object  opts  Response options
+ * @return  Void
+ */
+function Body(body) {
+	var _this = this;
+
+	var _ref = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {},
+	    _ref$size = _ref.size;
+
+	let size = _ref$size === undefined ? 0 : _ref$size;
+	var _ref$timeout = _ref.timeout;
+	let timeout = _ref$timeout === undefined ? 0 : _ref$timeout;
+
+	if (body == null) {
+		// body is undefined or null
+		body = null;
+	} else if (isURLSearchParams(body)) {
+		// body is a URLSearchParams
+		body = Buffer.from(body.toString());
+	} else if (isBlob(body)) ; else if (Buffer.isBuffer(body)) ; else if (Object.prototype.toString.call(body) === '[object ArrayBuffer]') {
+		// body is ArrayBuffer
+		body = Buffer.from(body);
+	} else if (ArrayBuffer.isView(body)) {
+		// body is ArrayBufferView
+		body = Buffer.from(body.buffer, body.byteOffset, body.byteLength);
+	} else if (body instanceof Stream) ; else {
+		// none of the above
+		// coerce to string then buffer
+		body = Buffer.from(String(body));
+	}
+	this[INTERNALS] = {
+		body,
+		disturbed: false,
+		error: null
+	};
+	this.size = size;
+	this.timeout = timeout;
+
+	if (body instanceof Stream) {
+		body.on('error', function (err) {
+			const error = err.name === 'AbortError' ? err : new FetchError(`Invalid response body while trying to fetch ${_this.url}: ${err.message}`, 'system', err);
+			_this[INTERNALS].error = error;
+		});
+	}
+}
+
+Body.prototype = {
+	get body() {
+		return this[INTERNALS].body;
+	},
+
+	get bodyUsed() {
+		return this[INTERNALS].disturbed;
+	},
+
+	/**
+  * Decode response as ArrayBuffer
+  *
+  * @return  Promise
+  */
+	arrayBuffer() {
+		return consumeBody.call(this).then(function (buf) {
+			return buf.buffer.slice(buf.byteOffset, buf.byteOffset + buf.byteLength);
+		});
+	},
+
+	/**
+  * Return raw response as Blob
+  *
+  * @return Promise
+  */
+	blob() {
+		let ct = this.headers && this.headers.get('content-type') || '';
+		return consumeBody.call(this).then(function (buf) {
+			return Object.assign(
+			// Prevent copying
+			new Blob([], {
+				type: ct.toLowerCase()
+			}), {
+				[BUFFER]: buf
+			});
+		});
+	},
+
+	/**
+  * Decode response as json
+  *
+  * @return  Promise
+  */
+	json() {
+		var _this2 = this;
+
+		return consumeBody.call(this).then(function (buffer) {
+			try {
+				return JSON.parse(buffer.toString());
+			} catch (err) {
+				return Body.Promise.reject(new FetchError(`invalid json response body at ${_this2.url} reason: ${err.message}`, 'invalid-json'));
+			}
+		});
+	},
+
+	/**
+  * Decode response as text
+  *
+  * @return  Promise
+  */
+	text() {
+		return consumeBody.call(this).then(function (buffer) {
+			return buffer.toString();
+		});
+	},
+
+	/**
+  * Decode response as buffer (non-spec api)
+  *
+  * @return  Promise
+  */
+	buffer() {
+		return consumeBody.call(this);
+	},
+
+	/**
+  * Decode response as text, while automatically detecting the encoding and
+  * trying to decode to UTF-8 (non-spec api)
+  *
+  * @return  Promise
+  */
+	textConverted() {
+		var _this3 = this;
+
+		return consumeBody.call(this).then(function (buffer) {
+			return convertBody(buffer, _this3.headers);
+		});
+	}
+};
+
+// In browsers, all properties are enumerable.
+Object.defineProperties(Body.prototype, {
+	body: { enumerable: true },
+	bodyUsed: { enumerable: true },
+	arrayBuffer: { enumerable: true },
+	blob: { enumerable: true },
+	json: { enumerable: true },
+	text: { enumerable: true }
+});
+
+Body.mixIn = function (proto) {
+	for (const name of Object.getOwnPropertyNames(Body.prototype)) {
+		// istanbul ignore else: future proof
+		if (!(name in proto)) {
+			const desc = Object.getOwnPropertyDescriptor(Body.prototype, name);
+			Object.defineProperty(proto, name, desc);
+		}
+	}
+};
+
+/**
+ * Consume and convert an entire Body to a Buffer.
+ *
+ * Ref: https://fetch.spec.whatwg.org/#concept-body-consume-body
+ *
+ * @return  Promise
+ */
+function consumeBody() {
+	var _this4 = this;
+
+	if (this[INTERNALS].disturbed) {
+		return Body.Promise.reject(new TypeError(`body used already for: ${this.url}`));
+	}
+
+	this[INTERNALS].disturbed = true;
+
+	if (this[INTERNALS].error) {
+		return Body.Promise.reject(this[INTERNALS].error);
+	}
+
+	let body = this.body;
+
+	// body is null
+	if (body === null) {
+		return Body.Promise.resolve(Buffer.alloc(0));
+	}
+
+	// body is blob
+	if (isBlob(body)) {
+		body = body.stream();
+	}
+
+	// body is buffer
+	if (Buffer.isBuffer(body)) {
+		return Body.Promise.resolve(body);
+	}
+
+	// istanbul ignore if: should never happen
+	if (!(body instanceof Stream)) {
+		return Body.Promise.resolve(Buffer.alloc(0));
+	}
+
+	// body is stream
+	// get ready to actually consume the body
+	let accum = [];
+	let accumBytes = 0;
+	let abort = false;
+
+	return new Body.Promise(function (resolve, reject) {
+		let resTimeout;
+
+		// allow timeout on slow response body
+		if (_this4.timeout) {
+			resTimeout = setTimeout(function () {
+				abort = true;
+				reject(new FetchError(`Response timeout while trying to fetch ${_this4.url} (over ${_this4.timeout}ms)`, 'body-timeout'));
+			}, _this4.timeout);
+		}
+
+		// handle stream errors
+		body.on('error', function (err) {
+			if (err.name === 'AbortError') {
+				// if the request was aborted, reject with this Error
+				abort = true;
+				reject(err);
+			} else {
+				// other errors, such as incorrect content-encoding
+				reject(new FetchError(`Invalid response body while trying to fetch ${_this4.url}: ${err.message}`, 'system', err));
+			}
+		});
+
+		body.on('data', function (chunk) {
+			if (abort || chunk === null) {
+				return;
+			}
+
+			if (_this4.size && accumBytes + chunk.length > _this4.size) {
+				abort = true;
+				reject(new FetchError(`content size at ${_this4.url} over limit: ${_this4.size}`, 'max-size'));
+				return;
+			}
+
+			accumBytes += chunk.length;
+			accum.push(chunk);
+		});
+
+		body.on('end', function () {
+			if (abort) {
+				return;
+			}
+
+			clearTimeout(resTimeout);
+
+			try {
+				resolve(Buffer.concat(accum, accumBytes));
+			} catch (err) {
+				// handle streams that have accumulated too much data (issue #414)
+				reject(new FetchError(`Could not create Buffer from response body for ${_this4.url}: ${err.message}`, 'system', err));
+			}
+		});
+	});
+}
+
+/**
+ * Detect buffer encoding and convert to target encoding
+ * ref: http://www.w3.org/TR/2011/WD-html5-20110113/parsing.html#determining-the-character-encoding
+ *
+ * @param   Buffer  buffer    Incoming buffer
+ * @param   String  encoding  Target encoding
+ * @return  String
+ */
+function convertBody(buffer, headers) {
+	if (typeof convert !== 'function') {
+		throw new Error('The package `encoding` must be installed to use the textConverted() function');
+	}
+
+	const ct = headers.get('content-type');
+	let charset = 'utf-8';
+	let res, str;
+
+	// header
+	if (ct) {
+		res = /charset=([^;]*)/i.exec(ct);
+	}
+
+	// no charset in content type, peek at response body for at most 1024 bytes
+	str = buffer.slice(0, 1024).toString();
+
+	// html5
+	if (!res && str) {
+		res = /<meta.+?charset=(['"])(.+?)\1/i.exec(str);
+	}
+
+	// html4
+	if (!res && str) {
+		res = /<meta[\s]+?http-equiv=(['"])content-type\1[\s]+?content=(['"])(.+?)\2/i.exec(str);
+		if (!res) {
+			res = /<meta[\s]+?content=(['"])(.+?)\1[\s]+?http-equiv=(['"])content-type\3/i.exec(str);
+			if (res) {
+				res.pop(); // drop last quote
+			}
+		}
+
+		if (res) {
+			res = /charset=(.*)/i.exec(res.pop());
+		}
+	}
+
+	// xml
+	if (!res && str) {
+		res = /<\?xml.+?encoding=(['"])(.+?)\1/i.exec(str);
+	}
+
+	// found charset
+	if (res) {
+		charset = res.pop();
+
+		// prevent decode issues when sites use incorrect encoding
+		// ref: https://hsivonen.fi/encoding-menu/
+		if (charset === 'gb2312' || charset === 'gbk') {
+			charset = 'gb18030';
+		}
+	}
+
+	// turn raw buffers into a single utf-8 buffer
+	return convert(buffer, 'UTF-8', charset).toString();
+}
+
+/**
+ * Detect a URLSearchParams object
+ * ref: https://github.com/bitinn/node-fetch/issues/296#issuecomment-307598143
+ *
+ * @param   Object  obj     Object to detect by type or brand
+ * @return  String
+ */
+function isURLSearchParams(obj) {
+	// Duck-typing as a necessary condition.
+	if (typeof obj !== 'object' || typeof obj.append !== 'function' || typeof obj.delete !== 'function' || typeof obj.get !== 'function' || typeof obj.getAll !== 'function' || typeof obj.has !== 'function' || typeof obj.set !== 'function') {
+		return false;
+	}
+
+	// Brand-checking and more duck-typing as optional condition.
+	return obj.constructor.name === 'URLSearchParams' || Object.prototype.toString.call(obj) === '[object URLSearchParams]' || typeof obj.sort === 'function';
+}
+
+/**
+ * Check if `obj` is a W3C `Blob` object (which `File` inherits from)
+ * @param  {*} obj
+ * @return {boolean}
+ */
+function isBlob(obj) {
+	return typeof obj === 'object' && typeof obj.arrayBuffer === 'function' && typeof obj.type === 'string' && typeof obj.stream === 'function' && typeof obj.constructor === 'function' && typeof obj.constructor.name === 'string' && /^(Blob|File)$/.test(obj.constructor.name) && /^(Blob|File)$/.test(obj[Symbol.toStringTag]);
+}
+
+/**
+ * Clone body given Res/Req instance
+ *
+ * @param   Mixed  instance  Response or Request instance
+ * @return  Mixed
+ */
+function clone(instance) {
+	let p1, p2;
+	let body = instance.body;
+
+	// don't allow cloning a used body
+	if (instance.bodyUsed) {
+		throw new Error('cannot clone body after it is used');
+	}
+
+	// check that body is a stream and not form-data object
+	// note: we can't clone the form-data object without having it as a dependency
+	if (body instanceof Stream && typeof body.getBoundary !== 'function') {
+		// tee instance body
+		p1 = new PassThrough();
+		p2 = new PassThrough();
+		body.pipe(p1);
+		body.pipe(p2);
+		// set instance body to teed body and return the other teed body
+		instance[INTERNALS].body = p1;
+		body = p2;
+	}
+
+	return body;
+}
+
+/**
+ * Performs the operation "extract a `Content-Type` value from |object|" as
+ * specified in the specification:
+ * https://fetch.spec.whatwg.org/#concept-bodyinit-extract
+ *
+ * This function assumes that instance.body is present.
+ *
+ * @param   Mixed  instance  Any options.body input
+ */
+function extractContentType(body) {
+	if (body === null) {
+		// body is null
+		return null;
+	} else if (typeof body === 'string') {
+		// body is string
+		return 'text/plain;charset=UTF-8';
+	} else if (isURLSearchParams(body)) {
+		// body is a URLSearchParams
+		return 'application/x-www-form-urlencoded;charset=UTF-8';
+	} else if (isBlob(body)) {
+		// body is blob
+		return body.type || null;
+	} else if (Buffer.isBuffer(body)) {
+		// body is buffer
+		return null;
+	} else if (Object.prototype.toString.call(body) === '[object ArrayBuffer]') {
+		// body is ArrayBuffer
+		return null;
+	} else if (ArrayBuffer.isView(body)) {
+		// body is ArrayBufferView
+		return null;
+	} else if (typeof body.getBoundary === 'function') {
+		// detect form data input from form-data module
+		return `multipart/form-data;boundary=${body.getBoundary()}`;
+	} else if (body instanceof Stream) {
+		// body is stream
+		// can't really do much about this
+		return null;
+	} else {
+		// Body constructor defaults other things to string
+		return 'text/plain;charset=UTF-8';
+	}
+}
+
+/**
+ * The Fetch Standard treats this as if "total bytes" is a property on the body.
+ * For us, we have to explicitly get it with a function.
+ *
+ * ref: https://fetch.spec.whatwg.org/#concept-body-total-bytes
+ *
+ * @param   Body    instance   Instance of Body
+ * @return  Number?            Number of bytes, or null if not possible
+ */
+function getTotalBytes(instance) {
+	const body = instance.body;
+
+
+	if (body === null) {
+		// body is null
+		return 0;
+	} else if (isBlob(body)) {
+		return body.size;
+	} else if (Buffer.isBuffer(body)) {
+		// body is buffer
+		return body.length;
+	} else if (body && typeof body.getLengthSync === 'function') {
+		// detect form data input from form-data module
+		if (body._lengthRetrievers && body._lengthRetrievers.length == 0 || // 1.x
+		body.hasKnownLength && body.hasKnownLength()) {
+			// 2.x
+			return body.getLengthSync();
+		}
+		return null;
+	} else {
+		// body is stream
+		return null;
+	}
+}
+
+/**
+ * Write a Body to a Node.js WritableStream (e.g. http.Request) object.
+ *
+ * @param   Body    instance   Instance of Body
+ * @return  Void
+ */
+function writeToStream(dest, instance) {
+	const body = instance.body;
+
+
+	if (body === null) {
+		// body is null
+		dest.end();
+	} else if (isBlob(body)) {
+		body.stream().pipe(dest);
+	} else if (Buffer.isBuffer(body)) {
+		// body is buffer
+		dest.write(body);
+		dest.end();
+	} else {
+		// body is stream
+		body.pipe(dest);
+	}
+}
+
+// expose Promise
+Body.Promise = global.Promise;
+
+/**
+ * headers.js
+ *
+ * Headers class offers convenient helpers
+ */
+
+const invalidTokenRegex = /[^\^_`a-zA-Z\-0-9!#$%&'*+.|~]/;
+const invalidHeaderCharRegex = /[^\t\x20-\x7e\x80-\xff]/;
+
+function validateName(name) {
+	name = `${name}`;
+	if (invalidTokenRegex.test(name) || name === '') {
+		throw new TypeError(`${name} is not a legal HTTP header name`);
+	}
+}
+
+function validateValue(value) {
+	value = `${value}`;
+	if (invalidHeaderCharRegex.test(value)) {
+		throw new TypeError(`${value} is not a legal HTTP header value`);
+	}
+}
+
+/**
+ * Find the key in the map object given a header name.
+ *
+ * Returns undefined if not found.
+ *
+ * @param   String  name  Header name
+ * @return  String|Undefined
+ */
+function find(map, name) {
+	name = name.toLowerCase();
+	for (const key in map) {
+		if (key.toLowerCase() === name) {
+			return key;
+		}
+	}
+	return undefined;
+}
+
+const MAP = Symbol('map');
+class Headers {
+	/**
+  * Headers class
+  *
+  * @param   Object  headers  Response headers
+  * @return  Void
+  */
+	constructor() {
+		let init = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : undefined;
+
+		this[MAP] = Object.create(null);
+
+		if (init instanceof Headers) {
+			const rawHeaders = init.raw();
+			const headerNames = Object.keys(rawHeaders);
+
+			for (const headerName of headerNames) {
+				for (const value of rawHeaders[headerName]) {
+					this.append(headerName, value);
+				}
+			}
+
+			return;
+		}
+
+		// We don't worry about converting prop to ByteString here as append()
+		// will handle it.
+		if (init == null) ; else if (typeof init === 'object') {
+			const method = init[Symbol.iterator];
+			if (method != null) {
+				if (typeof method !== 'function') {
+					throw new TypeError('Header pairs must be iterable');
+				}
+
+				// sequence<sequence<ByteString>>
+				// Note: per spec we have to first exhaust the lists then process them
+				const pairs = [];
+				for (const pair of init) {
+					if (typeof pair !== 'object' || typeof pair[Symbol.iterator] !== 'function') {
+						throw new TypeError('Each header pair must be iterable');
+					}
+					pairs.push(Array.from(pair));
+				}
+
+				for (const pair of pairs) {
+					if (pair.length !== 2) {
+						throw new TypeError('Each header pair must be a name/value tuple');
+					}
+					this.append(pair[0], pair[1]);
+				}
+			} else {
+				// record<ByteString, ByteString>
+				for (const key of Object.keys(init)) {
+					const value = init[key];
+					this.append(key, value);
+				}
+			}
+		} else {
+			throw new TypeError('Provided initializer must be an object');
+		}
+	}
+
+	/**
+  * Return combined header value given name
+  *
+  * @param   String  name  Header name
+  * @return  Mixed
+  */
+	get(name) {
+		name = `${name}`;
+		validateName(name);
+		const key = find(this[MAP], name);
+		if (key === undefined) {
+			return null;
+		}
+
+		return this[MAP][key].join(', ');
+	}
+
+	/**
+  * Iterate over all headers
+  *
+  * @param   Function  callback  Executed for each item with parameters (value, name, thisArg)
+  * @param   Boolean   thisArg   `this` context for callback function
+  * @return  Void
+  */
+	forEach(callback) {
+		let thisArg = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : undefined;
+
+		let pairs = getHeaders(this);
+		let i = 0;
+		while (i < pairs.length) {
+			var _pairs$i = pairs[i];
+			const name = _pairs$i[0],
+			      value = _pairs$i[1];
+
+			callback.call(thisArg, value, name, this);
+			pairs = getHeaders(this);
+			i++;
+		}
+	}
+
+	/**
+  * Overwrite header values given name
+  *
+  * @param   String  name   Header name
+  * @param   String  value  Header value
+  * @return  Void
+  */
+	set(name, value) {
+		name = `${name}`;
+		value = `${value}`;
+		validateName(name);
+		validateValue(value);
+		const key = find(this[MAP], name);
+		this[MAP][key !== undefined ? key : name] = [value];
+	}
+
+	/**
+  * Append a value onto existing header
+  *
+  * @param   String  name   Header name
+  * @param   String  value  Header value
+  * @return  Void
+  */
+	append(name, value) {
+		name = `${name}`;
+		value = `${value}`;
+		validateName(name);
+		validateValue(value);
+		const key = find(this[MAP], name);
+		if (key !== undefined) {
+			this[MAP][key].push(value);
+		} else {
+			this[MAP][name] = [value];
+		}
+	}
+
+	/**
+  * Check for header name existence
+  *
+  * @param   String   name  Header name
+  * @return  Boolean
+  */
+	has(name) {
+		name = `${name}`;
+		validateName(name);
+		return find(this[MAP], name) !== undefined;
+	}
+
+	/**
+  * Delete all header values given name
+  *
+  * @param   String  name  Header name
+  * @return  Void
+  */
+	delete(name) {
+		name = `${name}`;
+		validateName(name);
+		const key = find(this[MAP], name);
+		if (key !== undefined) {
+			delete this[MAP][key];
+		}
+	}
+
+	/**
+  * Return raw headers (non-spec api)
+  *
+  * @return  Object
+  */
+	raw() {
+		return this[MAP];
+	}
+
+	/**
+  * Get an iterator on keys.
+  *
+  * @return  Iterator
+  */
+	keys() {
+		return createHeadersIterator(this, 'key');
+	}
+
+	/**
+  * Get an iterator on values.
+  *
+  * @return  Iterator
+  */
+	values() {
+		return createHeadersIterator(this, 'value');
+	}
+
+	/**
+  * Get an iterator on entries.
+  *
+  * This is the default iterator of the Headers object.
+  *
+  * @return  Iterator
+  */
+	[Symbol.iterator]() {
+		return createHeadersIterator(this, 'key+value');
+	}
+}
+Headers.prototype.entries = Headers.prototype[Symbol.iterator];
+
+Object.defineProperty(Headers.prototype, Symbol.toStringTag, {
+	value: 'Headers',
+	writable: false,
+	enumerable: false,
+	configurable: true
+});
+
+Object.defineProperties(Headers.prototype, {
+	get: { enumerable: true },
+	forEach: { enumerable: true },
+	set: { enumerable: true },
+	append: { enumerable: true },
+	has: { enumerable: true },
+	delete: { enumerable: true },
+	keys: { enumerable: true },
+	values: { enumerable: true },
+	entries: { enumerable: true }
+});
+
+function getHeaders(headers) {
+	let kind = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 'key+value';
+
+	const keys = Object.keys(headers[MAP]).sort();
+	return keys.map(kind === 'key' ? function (k) {
+		return k.toLowerCase();
+	} : kind === 'value' ? function (k) {
+		return headers[MAP][k].join(', ');
+	} : function (k) {
+		return [k.toLowerCase(), headers[MAP][k].join(', ')];
+	});
+}
+
+const INTERNAL = Symbol('internal');
+
+function createHeadersIterator(target, kind) {
+	const iterator = Object.create(HeadersIteratorPrototype);
+	iterator[INTERNAL] = {
+		target,
+		kind,
+		index: 0
+	};
+	return iterator;
+}
+
+const HeadersIteratorPrototype = Object.setPrototypeOf({
+	next() {
+		// istanbul ignore if
+		if (!this || Object.getPrototypeOf(this) !== HeadersIteratorPrototype) {
+			throw new TypeError('Value of `this` is not a HeadersIterator');
+		}
+
+		var _INTERNAL = this[INTERNAL];
+		const target = _INTERNAL.target,
+		      kind = _INTERNAL.kind,
+		      index = _INTERNAL.index;
+
+		const values = getHeaders(target, kind);
+		const len = values.length;
+		if (index >= len) {
+			return {
+				value: undefined,
+				done: true
+			};
+		}
+
+		this[INTERNAL].index = index + 1;
+
+		return {
+			value: values[index],
+			done: false
+		};
+	}
+}, Object.getPrototypeOf(Object.getPrototypeOf([][Symbol.iterator]())));
+
+Object.defineProperty(HeadersIteratorPrototype, Symbol.toStringTag, {
+	value: 'HeadersIterator',
+	writable: false,
+	enumerable: false,
+	configurable: true
+});
+
+/**
+ * Export the Headers object in a form that Node.js can consume.
+ *
+ * @param   Headers  headers
+ * @return  Object
+ */
+function exportNodeCompatibleHeaders(headers) {
+	const obj = Object.assign({ __proto__: null }, headers[MAP]);
+
+	// http.request() only supports string as Host header. This hack makes
+	// specifying custom Host header possible.
+	const hostHeaderKey = find(headers[MAP], 'Host');
+	if (hostHeaderKey !== undefined) {
+		obj[hostHeaderKey] = obj[hostHeaderKey][0];
+	}
+
+	return obj;
+}
+
+/**
+ * Create a Headers object from an object of headers, ignoring those that do
+ * not conform to HTTP grammar productions.
+ *
+ * @param   Object  obj  Object of headers
+ * @return  Headers
+ */
+function createHeadersLenient(obj) {
+	const headers = new Headers();
+	for (const name of Object.keys(obj)) {
+		if (invalidTokenRegex.test(name)) {
+			continue;
+		}
+		if (Array.isArray(obj[name])) {
+			for (const val of obj[name]) {
+				if (invalidHeaderCharRegex.test(val)) {
+					continue;
+				}
+				if (headers[MAP][name] === undefined) {
+					headers[MAP][name] = [val];
+				} else {
+					headers[MAP][name].push(val);
+				}
+			}
+		} else if (!invalidHeaderCharRegex.test(obj[name])) {
+			headers[MAP][name] = [obj[name]];
+		}
+	}
+	return headers;
+}
+
+const INTERNALS$1 = Symbol('Response internals');
+
+// fix an issue where "STATUS_CODES" aren't a named export for node <10
+const STATUS_CODES = http.STATUS_CODES;
+
+/**
+ * Response class
+ *
+ * @param   Stream  body  Readable stream
+ * @param   Object  opts  Response options
+ * @return  Void
+ */
+class Response {
+	constructor() {
+		let body = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : null;
+		let opts = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
+
+		Body.call(this, body, opts);
+
+		const status = opts.status || 200;
+		const headers = new Headers(opts.headers);
+
+		if (body != null && !headers.has('Content-Type')) {
+			const contentType = extractContentType(body);
+			if (contentType) {
+				headers.append('Content-Type', contentType);
+			}
+		}
+
+		this[INTERNALS$1] = {
+			url: opts.url,
+			status,
+			statusText: opts.statusText || STATUS_CODES[status],
+			headers,
+			counter: opts.counter
+		};
+	}
+
+	get url() {
+		return this[INTERNALS$1].url || '';
+	}
+
+	get status() {
+		return this[INTERNALS$1].status;
+	}
+
+	/**
+  * Convenience property representing if the request ended normally
+  */
+	get ok() {
+		return this[INTERNALS$1].status >= 200 && this[INTERNALS$1].status < 300;
+	}
+
+	get redirected() {
+		return this[INTERNALS$1].counter > 0;
+	}
+
+	get statusText() {
+		return this[INTERNALS$1].statusText;
+	}
+
+	get headers() {
+		return this[INTERNALS$1].headers;
+	}
+
+	/**
+  * Clone this response
+  *
+  * @return  Response
+  */
+	clone() {
+		return new Response(clone(this), {
+			url: this.url,
+			status: this.status,
+			statusText: this.statusText,
+			headers: this.headers,
+			ok: this.ok,
+			redirected: this.redirected
+		});
+	}
+}
+
+Body.mixIn(Response.prototype);
+
+Object.defineProperties(Response.prototype, {
+	url: { enumerable: true },
+	status: { enumerable: true },
+	ok: { enumerable: true },
+	redirected: { enumerable: true },
+	statusText: { enumerable: true },
+	headers: { enumerable: true },
+	clone: { enumerable: true }
+});
+
+Object.defineProperty(Response.prototype, Symbol.toStringTag, {
+	value: 'Response',
+	writable: false,
+	enumerable: false,
+	configurable: true
+});
+
+const INTERNALS$2 = Symbol('Request internals');
+
+// fix an issue where "format", "parse" aren't a named export for node <10
+const parse_url = Url.parse;
+const format_url = Url.format;
+
+const streamDestructionSupported = 'destroy' in Stream.Readable.prototype;
+
+/**
+ * Check if a value is an instance of Request.
+ *
+ * @param   Mixed   input
+ * @return  Boolean
+ */
+function isRequest(input) {
+	return typeof input === 'object' && typeof input[INTERNALS$2] === 'object';
+}
+
+function isAbortSignal(signal) {
+	const proto = signal && typeof signal === 'object' && Object.getPrototypeOf(signal);
+	return !!(proto && proto.constructor.name === 'AbortSignal');
+}
+
+/**
+ * Request class
+ *
+ * @param   Mixed   input  Url or Request instance
+ * @param   Object  init   Custom options
+ * @return  Void
+ */
+class Request {
+	constructor(input) {
+		let init = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
+
+		let parsedURL;
+
+		// normalize input
+		if (!isRequest(input)) {
+			if (input && input.href) {
+				// in order to support Node.js' Url objects; though WHATWG's URL objects
+				// will fall into this branch also (since their `toString()` will return
+				// `href` property anyway)
+				parsedURL = parse_url(input.href);
+			} else {
+				// coerce input to a string before attempting to parse
+				parsedURL = parse_url(`${input}`);
+			}
+			input = {};
+		} else {
+			parsedURL = parse_url(input.url);
+		}
+
+		let method = init.method || input.method || 'GET';
+		method = method.toUpperCase();
+
+		if ((init.body != null || isRequest(input) && input.body !== null) && (method === 'GET' || method === 'HEAD')) {
+			throw new TypeError('Request with GET/HEAD method cannot have body');
+		}
+
+		let inputBody = init.body != null ? init.body : isRequest(input) && input.body !== null ? clone(input) : null;
+
+		Body.call(this, inputBody, {
+			timeout: init.timeout || input.timeout || 0,
+			size: init.size || input.size || 0
+		});
+
+		const headers = new Headers(init.headers || input.headers || {});
+
+		if (inputBody != null && !headers.has('Content-Type')) {
+			const contentType = extractContentType(inputBody);
+			if (contentType) {
+				headers.append('Content-Type', contentType);
+			}
+		}
+
+		let signal = isRequest(input) ? input.signal : null;
+		if ('signal' in init) signal = init.signal;
+
+		if (signal != null && !isAbortSignal(signal)) {
+			throw new TypeError('Expected signal to be an instanceof AbortSignal');
+		}
+
+		this[INTERNALS$2] = {
+			method,
+			redirect: init.redirect || input.redirect || 'follow',
+			headers,
+			parsedURL,
+			signal
+		};
+
+		// node-fetch-only options
+		this.follow = init.follow !== undefined ? init.follow : input.follow !== undefined ? input.follow : 20;
+		this.compress = init.compress !== undefined ? init.compress : input.compress !== undefined ? input.compress : true;
+		this.counter = init.counter || input.counter || 0;
+		this.agent = init.agent || input.agent;
+	}
+
+	get method() {
+		return this[INTERNALS$2].method;
+	}
+
+	get url() {
+		return format_url(this[INTERNALS$2].parsedURL);
+	}
+
+	get headers() {
+		return this[INTERNALS$2].headers;
+	}
+
+	get redirect() {
+		return this[INTERNALS$2].redirect;
+	}
+
+	get signal() {
+		return this[INTERNALS$2].signal;
+	}
+
+	/**
+  * Clone this request
+  *
+  * @return  Request
+  */
+	clone() {
+		return new Request(this);
+	}
+}
+
+Body.mixIn(Request.prototype);
+
+Object.defineProperty(Request.prototype, Symbol.toStringTag, {
+	value: 'Request',
+	writable: false,
+	enumerable: false,
+	configurable: true
+});
+
+Object.defineProperties(Request.prototype, {
+	method: { enumerable: true },
+	url: { enumerable: true },
+	headers: { enumerable: true },
+	redirect: { enumerable: true },
+	clone: { enumerable: true },
+	signal: { enumerable: true }
+});
+
+/**
+ * Convert a Request to Node.js http request options.
+ *
+ * @param   Request  A Request instance
+ * @return  Object   The options object to be passed to http.request
+ */
+function getNodeRequestOptions(request) {
+	const parsedURL = request[INTERNALS$2].parsedURL;
+	const headers = new Headers(request[INTERNALS$2].headers);
+
+	// fetch step 1.3
+	if (!headers.has('Accept')) {
+		headers.set('Accept', '*/*');
+	}
+
+	// Basic fetch
+	if (!parsedURL.protocol || !parsedURL.hostname) {
+		throw new TypeError('Only absolute URLs are supported');
+	}
+
+	if (!/^https?:$/.test(parsedURL.protocol)) {
+		throw new TypeError('Only HTTP(S) protocols are supported');
+	}
+
+	if (request.signal && request.body instanceof Stream.Readable && !streamDestructionSupported) {
+		throw new Error('Cancellation of streamed requests with AbortSignal is not supported in node < 8');
+	}
+
+	// HTTP-network-or-cache fetch steps 2.4-2.7
+	let contentLengthValue = null;
+	if (request.body == null && /^(POST|PUT)$/i.test(request.method)) {
+		contentLengthValue = '0';
+	}
+	if (request.body != null) {
+		const totalBytes = getTotalBytes(request);
+		if (typeof totalBytes === 'number') {
+			contentLengthValue = String(totalBytes);
+		}
+	}
+	if (contentLengthValue) {
+		headers.set('Content-Length', contentLengthValue);
+	}
+
+	// HTTP-network-or-cache fetch step 2.11
+	if (!headers.has('User-Agent')) {
+		headers.set('User-Agent', 'node-fetch/1.0 (+https://github.com/bitinn/node-fetch)');
+	}
+
+	// HTTP-network-or-cache fetch step 2.15
+	if (request.compress && !headers.has('Accept-Encoding')) {
+		headers.set('Accept-Encoding', 'gzip,deflate');
+	}
+
+	let agent = request.agent;
+	if (typeof agent === 'function') {
+		agent = agent(parsedURL);
+	}
+
+	if (!headers.has('Connection') && !agent) {
+		headers.set('Connection', 'close');
+	}
+
+	// HTTP-network fetch step 4.2
+	// chunked encoding is handled by Node.js
+
+	return Object.assign({}, parsedURL, {
+		method: request.method,
+		headers: exportNodeCompatibleHeaders(headers),
+		agent
+	});
+}
+
+/**
+ * abort-error.js
+ *
+ * AbortError interface for cancelled requests
+ */
+
+/**
+ * Create AbortError instance
+ *
+ * @param   String      message      Error message for human
+ * @return  AbortError
+ */
+function AbortError(message) {
+  Error.call(this, message);
+
+  this.type = 'aborted';
+  this.message = message;
+
+  // hide custom error implementation details from end-users
+  Error.captureStackTrace(this, this.constructor);
+}
+
+AbortError.prototype = Object.create(Error.prototype);
+AbortError.prototype.constructor = AbortError;
+AbortError.prototype.name = 'AbortError';
+
+// fix an issue where "PassThrough", "resolve" aren't a named export for node <10
+const PassThrough$1 = Stream.PassThrough;
+const resolve_url = Url.resolve;
+
+/**
+ * Fetch function
+ *
+ * @param   Mixed    url   Absolute url or Request instance
+ * @param   Object   opts  Fetch options
+ * @return  Promise
+ */
+function fetch(url, opts) {
+
+	// allow custom promise
+	if (!fetch.Promise) {
+		throw new Error('native promise missing, set fetch.Promise to your favorite alternative');
+	}
+
+	Body.Promise = fetch.Promise;
+
+	// wrap http.request into fetch
+	return new fetch.Promise(function (resolve, reject) {
+		// build request object
+		const request = new Request(url, opts);
+		const options = getNodeRequestOptions(request);
+
+		const send = (options.protocol === 'https:' ? https : http).request;
+		const signal = request.signal;
+
+		let response = null;
+
+		const abort = function abort() {
+			let error = new AbortError('The user aborted a request.');
+			reject(error);
+			if (request.body && request.body instanceof Stream.Readable) {
+				request.body.destroy(error);
+			}
+			if (!response || !response.body) return;
+			response.body.emit('error', error);
+		};
+
+		if (signal && signal.aborted) {
+			abort();
+			return;
+		}
+
+		const abortAndFinalize = function abortAndFinalize() {
+			abort();
+			finalize();
+		};
+
+		// send request
+		const req = send(options);
+		let reqTimeout;
+
+		if (signal) {
+			signal.addEventListener('abort', abortAndFinalize);
+		}
+
+		function finalize() {
+			req.abort();
+			if (signal) signal.removeEventListener('abort', abortAndFinalize);
+			clearTimeout(reqTimeout);
+		}
+
+		if (request.timeout) {
+			req.once('socket', function (socket) {
+				reqTimeout = setTimeout(function () {
+					reject(new FetchError(`network timeout at: ${request.url}`, 'request-timeout'));
+					finalize();
+				}, request.timeout);
+			});
+		}
+
+		req.on('error', function (err) {
+			reject(new FetchError(`request to ${request.url} failed, reason: ${err.message}`, 'system', err));
+			finalize();
+		});
+
+		req.on('response', function (res) {
+			clearTimeout(reqTimeout);
+
+			const headers = createHeadersLenient(res.headers);
+
+			// HTTP fetch step 5
+			if (fetch.isRedirect(res.statusCode)) {
+				// HTTP fetch step 5.2
+				const location = headers.get('Location');
+
+				// HTTP fetch step 5.3
+				const locationURL = location === null ? null : resolve_url(request.url, location);
+
+				// HTTP fetch step 5.5
+				switch (request.redirect) {
+					case 'error':
+						reject(new FetchError(`uri requested responds with a redirect, redirect mode is set to error: ${request.url}`, 'no-redirect'));
+						finalize();
+						return;
+					case 'manual':
+						// node-fetch-specific step: make manual redirect a bit easier to use by setting the Location header value to the resolved URL.
+						if (locationURL !== null) {
+							// handle corrupted header
+							try {
+								headers.set('Location', locationURL);
+							} catch (err) {
+								// istanbul ignore next: nodejs server prevent invalid response headers, we can't test this through normal request
+								reject(err);
+							}
+						}
+						break;
+					case 'follow':
+						// HTTP-redirect fetch step 2
+						if (locationURL === null) {
+							break;
+						}
+
+						// HTTP-redirect fetch step 5
+						if (request.counter >= request.follow) {
+							reject(new FetchError(`maximum redirect reached at: ${request.url}`, 'max-redirect'));
+							finalize();
+							return;
+						}
+
+						// HTTP-redirect fetch step 6 (counter increment)
+						// Create a new Request object.
+						const requestOpts = {
+							headers: new Headers(request.headers),
+							follow: request.follow,
+							counter: request.counter + 1,
+							agent: request.agent,
+							compress: request.compress,
+							method: request.method,
+							body: request.body,
+							signal: request.signal,
+							timeout: request.timeout,
+							size: request.size
+						};
+
+						// HTTP-redirect fetch step 9
+						if (res.statusCode !== 303 && request.body && getTotalBytes(request) === null) {
+							reject(new FetchError('Cannot follow redirect with body being a readable stream', 'unsupported-redirect'));
+							finalize();
+							return;
+						}
+
+						// HTTP-redirect fetch step 11
+						if (res.statusCode === 303 || (res.statusCode === 301 || res.statusCode === 302) && request.method === 'POST') {
+							requestOpts.method = 'GET';
+							requestOpts.body = undefined;
+							requestOpts.headers.delete('content-length');
+						}
+
+						// HTTP-redirect fetch step 15
+						resolve(fetch(new Request(locationURL, requestOpts)));
+						finalize();
+						return;
+				}
+			}
+
+			// prepare response
+			res.once('end', function () {
+				if (signal) signal.removeEventListener('abort', abortAndFinalize);
+			});
+			let body = res.pipe(new PassThrough$1());
+
+			const response_options = {
+				url: request.url,
+				status: res.statusCode,
+				statusText: res.statusMessage,
+				headers: headers,
+				size: request.size,
+				timeout: request.timeout,
+				counter: request.counter
+			};
+
+			// HTTP-network fetch step 12.1.1.3
+			const codings = headers.get('Content-Encoding');
+
+			// HTTP-network fetch step 12.1.1.4: handle content codings
+
+			// in following scenarios we ignore compression support
+			// 1. compression support is disabled
+			// 2. HEAD request
+			// 3. no Content-Encoding header
+			// 4. no content response (204)
+			// 5. content not modified response (304)
+			if (!request.compress || request.method === 'HEAD' || codings === null || res.statusCode === 204 || res.statusCode === 304) {
+				response = new Response(body, response_options);
+				resolve(response);
+				return;
+			}
+
+			// For Node v6+
+			// Be less strict when decoding compressed responses, since sometimes
+			// servers send slightly invalid responses that are still accepted
+			// by common browsers.
+			// Always using Z_SYNC_FLUSH is what cURL does.
+			const zlibOptions = {
+				flush: zlib.Z_SYNC_FLUSH,
+				finishFlush: zlib.Z_SYNC_FLUSH
+			};
+
+			// for gzip
+			if (codings == 'gzip' || codings == 'x-gzip') {
+				body = body.pipe(zlib.createGunzip(zlibOptions));
+				response = new Response(body, response_options);
+				resolve(response);
+				return;
+			}
+
+			// for deflate
+			if (codings == 'deflate' || codings == 'x-deflate') {
+				// handle the infamous raw deflate response from old servers
+				// a hack for old IIS and Apache servers
+				const raw = res.pipe(new PassThrough$1());
+				raw.once('data', function (chunk) {
+					// see http://stackoverflow.com/questions/37519828
+					if ((chunk[0] & 0x0F) === 0x08) {
+						body = body.pipe(zlib.createInflate());
+					} else {
+						body = body.pipe(zlib.createInflateRaw());
+					}
+					response = new Response(body, response_options);
+					resolve(response);
+				});
+				return;
+			}
+
+			// for br
+			if (codings == 'br' && typeof zlib.createBrotliDecompress === 'function') {
+				body = body.pipe(zlib.createBrotliDecompress());
+				response = new Response(body, response_options);
+				resolve(response);
+				return;
+			}
+
+			// otherwise, use response as-is
+			response = new Response(body, response_options);
+			resolve(response);
+		});
+
+		writeToStream(req, request);
+	});
+}
+/**
+ * Redirect code matching
+ *
+ * @param   Number   code  Status code
+ * @return  Boolean
+ */
+fetch.isRedirect = function (code) {
+	return code === 301 || code === 302 || code === 303 || code === 307 || code === 308;
+};
+
+// expose Promise
+fetch.Promise = global.Promise;
+
+module.exports = exports = fetch;
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports.default = exports;
+exports.Headers = Headers;
+exports.Request = Request;
+exports.Response = Response;
+exports.FetchError = FetchError;
+
+
+/***/ }),
+
+/***/ 223:
+/***/ ((module, __unused_webpack_exports, __webpack_require__) => {
+
+var wrappy = __webpack_require__(940)
+module.exports = wrappy(once)
+module.exports.strict = wrappy(onceStrict)
+
+once.proto = once(function () {
+  Object.defineProperty(Function.prototype, 'once', {
+    value: function () {
+      return once(this)
+    },
+    configurable: true
+  })
+
+  Object.defineProperty(Function.prototype, 'onceStrict', {
+    value: function () {
+      return onceStrict(this)
+    },
+    configurable: true
+  })
+})
+
+function once (fn) {
+  var f = function () {
+    if (f.called) return f.value
+    f.called = true
+    return f.value = fn.apply(this, arguments)
+  }
+  f.called = false
+  return f
+}
+
+function onceStrict (fn) {
+  var f = function () {
+    if (f.called)
+      throw new Error(f.onceError)
+    f.called = true
+    return f.value = fn.apply(this, arguments)
+  }
+  var name = fn.name || 'Function wrapped with `once`'
+  f.onceError = name + " shouldn't be called more than once"
+  f.called = false
+  return f
+}
+
+
+/***/ }),
+
+/***/ 30:
+/***/ ((__unused_webpack_module, exports) => {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+
+function getUserAgent() {
+  if (typeof navigator === "object" && "userAgent" in navigator) {
+    return navigator.userAgent;
+  }
+
+  if (typeof process === "object" && "version" in process) {
+    return `Node.js/${process.version.substr(1)} (${process.platform}; ${process.arch})`;
+  }
+
+  return "<environment undetectable>";
+}
+
+exports.getUserAgent = getUserAgent;
+//# sourceMappingURL=index.js.map
+
+
+/***/ }),
+
+/***/ 940:
+/***/ ((module) => {
+
+// Returns a wrapper function that returns a wrapped callback
+// The wrapper function should do some stuff, and return a
+// presumably different callback function.
+// This makes sure that own properties are retained, so that
+// decorations and such are not lost along the way.
+module.exports = wrappy
+function wrappy (fn, cb) {
+  if (fn && cb) return wrappy(fn)(cb)
+
+  if (typeof fn !== 'function')
+    throw new TypeError('need wrapper function')
+
+  Object.keys(fn).forEach(function (k) {
+    wrapper[k] = fn[k]
+  })
+
+  return wrapper
+
+  function wrapper() {
+    var args = new Array(arguments.length)
+    for (var i = 0; i < args.length; i++) {
+      args[i] = arguments[i]
+    }
+    var ret = fn.apply(this, args)
+    var cb = args[args.length-1]
+    if (typeof ret === 'function' && ret !== cb) {
+      Object.keys(cb).forEach(function (k) {
+        ret[k] = cb[k]
+      })
+    }
+    return ret
+  }
+}
+
+
+/***/ }),
+
+/***/ 785:
+/***/ ((module) => {
+
+module.exports = eval("require")("@octokit/rest");
+
+
+/***/ }),
+
+/***/ 877:
+/***/ ((module) => {
+
+module.exports = eval("require")("encoding");
+
+
+/***/ }),
+
+/***/ 747:
+/***/ ((module) => {
+
+"use strict";
+module.exports = require("fs");
+
+/***/ }),
+
+/***/ 605:
+/***/ ((module) => {
+
+"use strict";
+module.exports = require("http");
+
+/***/ }),
+
+/***/ 211:
+/***/ ((module) => {
+
+"use strict";
+module.exports = require("https");
+
+/***/ }),
+
+/***/ 87:
+/***/ ((module) => {
+
+"use strict";
+module.exports = require("os");
+
+/***/ }),
+
+/***/ 622:
+/***/ ((module) => {
+
+"use strict";
+module.exports = require("path");
+
+/***/ }),
+
+/***/ 413:
+/***/ ((module) => {
+
+"use strict";
+module.exports = require("stream");
+
+/***/ }),
+
+/***/ 835:
+/***/ ((module) => {
+
+"use strict";
+module.exports = require("url");
+
+/***/ }),
+
+/***/ 761:
+/***/ ((module) => {
+
+"use strict";
+module.exports = require("zlib");
+
+/***/ })
+
+/******/ 	});
+/************************************************************************/
+/******/ 	// The module cache
+/******/ 	var __webpack_module_cache__ = {};
+/******/ 	
+/******/ 	// The require function
+/******/ 	function __webpack_require__(moduleId) {
+/******/ 		// Check if module is in cache
+/******/ 		if(__webpack_module_cache__[moduleId]) {
+/******/ 			return __webpack_module_cache__[moduleId].exports;
+/******/ 		}
+/******/ 		// Create a new module (and put it into the cache)
+/******/ 		var module = __webpack_module_cache__[moduleId] = {
+/******/ 			// no module.id needed
+/******/ 			// no module.loaded needed
+/******/ 			exports: {}
+/******/ 		};
+/******/ 	
+/******/ 		// Execute the module function
+/******/ 		var threw = true;
+/******/ 		try {
+/******/ 			__webpack_modules__[moduleId].call(module.exports, module, module.exports, __webpack_require__);
+/******/ 			threw = false;
+/******/ 		} finally {
+/******/ 			if(threw) delete __webpack_module_cache__[moduleId];
+/******/ 		}
+/******/ 	
+/******/ 		// Return the exports of the module
+/******/ 		return module.exports;
+/******/ 	}
+/******/ 	
+/************************************************************************/
+/******/ 	/* webpack/runtime/compat */
+/******/ 	
+/******/ 	__webpack_require__.ab = __dirname + "/";/************************************************************************/
+/******/ 	// module exports must be returned from runtime so entry inlining is disabled
+/******/ 	// startup
+/******/ 	// Load entry module and return exports
+/******/ 	return __webpack_require__(932);
+/******/ })()
+;
 //# sourceMappingURL=index.js.map

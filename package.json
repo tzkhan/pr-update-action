@@ -4,7 +4,7 @@
   "description": "PR Update GitHub Action",
   "main": "index.js",
   "scripts": {
-    "build": "ncc build index.js --out dist --minify --source-map --license licenses.txt",
+    "build": "ncc build index.js --out dist --source-map --license licenses.txt",
     "lint": "eslint index.js",
     "test": "eslint index.js && jest"
   },
