@@ -7,27 +7,27 @@ This is a GitHub Action that updates a pull request with information extracted f
 
 ## Usage
 
-Create a workflow yaml file (eg: `.github/workflows/update-pr.yml` see [Creating a Workflow file](https://docs.github.com/en/free-pro-team@latest/actions/learn-github-actions/introduction-to-github-actions#create-an-example-workflow)).
+Create a workflow yaml file (for e.g. `.github/workflows/update-pr.yml`). See [Creating a Workflow file](https://docs.github.com/en/free-pro-team@latest/actions/learn-github-actions/introduction-to-github-actions#create-an-example-workflow).
 
 ### Inputs
 
 #### Required
-- `repo-token`: secret token to allow the action to make calls to GitHub's rest API - set it to `${{ secrets.GITHUB_TOKEN }}`
+- `repo-token`: secret token to allow the action to make calls to GitHub's rest API - for e.g. `${{ secrets.GITHUB_TOKEN }}`
 
 #### Optional
 - `base-branch-regex`: regex to match text from the base branch name
 - `head-branch-regex`: regex to match text from the head branch name
-- `lowercase-branch`: whether to lowercase branch name before matching - defaults to `true`
+- `lowercase-branch`: whether to lowercase branch name before matching (default: `true`)
 - `title-template`: text template to update title with
-- `title-update-action`: whether to prefix or suffix or replace title with title-template - defaults to `prefix`
-- `title-insert-space`: whether to insert a space between title and its prefix or suffix - defaults to `true`
-- `title-uppercase-base-match`: whether to uppercase matched text from base branch in title - defaults to `true`
-- `title-uppercase-head-match`: whether to uppercase matched text from head branch in title - defaults to `true`
+- `title-update-action`: whether to prefix or suffix or replace title with title-template (default: `prefix`)
+- `title-insert-space`: whether to insert a space between title and its prefix or suffix (default: `true`)
+- `title-uppercase-base-match`: whether to uppercase matched text from base branch in title (default: `true`)
+- `title-uppercase-head-match`: whether to uppercase matched text from head branch in title (default: `true`)
 - `body-template`: text template to update body with
-- `body-update-action`: whether to prefix or replace body with body-template - defaults to `prefix`
-- `body-newline-count`: number of newlines to separate body and its prefix or suffix - defaults to `2`
-- `body-uppercase-base-match`: whether to uppercase matched text from base branch in body - defaults to `true`
-- `body-uppercase-head-match`: whether to uppercase matched text from head branch in body - defaults to `true`
+- `body-update-action`: whether to prefix or replace body with body-template (default: `prefix`)
+- `body-newline-count`: number of newlines to separate body and its prefix or suffix (default: `2`)
+- `body-uppercase-base-match`: whether to uppercase matched text from base branch in body (default: `true`)
+- `body-uppercase-head-match`: whether to uppercase matched text from head branch in body (default: `true`)
 
 #### Notes:
 
