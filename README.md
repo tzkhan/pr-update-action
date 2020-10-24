@@ -28,6 +28,7 @@ jobs:
         lowercase-branch: true                      # optional - whether to lowercase branch name before matching
         title-template: ''                          # optional - text template to update title with
         title-update-action: 'prefix'               # optional - whether to prefix or suffix or replace title with title-template
+        title-insert-space: true                    # optional - whether to insert a space between title and its prefix or suffix
         title-uppercase-base-match: true            # optional - whether to uppercase matched text from base branch in title
         title-uppercase-head-match: true            # optional - whether to uppercase matched text from head branch in title
         body-template: ''                           # optional - text template to update body with
@@ -70,7 +71,7 @@ jobs:
     - uses: tzkhan/pr-update-action@v2
       with:
         repo-token: "${{ secrets.GITHUB_TOKEN }}"
-        base-branch-regex: '[a-z\\d-_.\\/]+'
+        base-branch-regex: '[a-z\d-_.\\/]+'
         head-branch-regex: 'foo-\d+'
         title-template: '[%headbranch%] '
         title-update-action: 'prefix'

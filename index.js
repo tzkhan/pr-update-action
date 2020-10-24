@@ -13,6 +13,7 @@ async function run() {
       lowercaseBranch: (core.getInput('lowercase-branch').toLowerCase() === 'true'),
       titleTemplate: core.getInput('title-template'),
       titleUpdateAction: core.getInput('title-update-action').toLowerCase(),
+      titleInsertSpace: (core.getInput('title-insert-space').toLowerCase() === 'true'),
       titleUppercaseBaseMatch: (core.getInput('title-uppercase-base-match').toLowerCase() === 'true'),
       titleUppercaseHeadMatch: (core.getInput('title-uppercase-head-match').toLowerCase() === 'true'),
       bodyTemplate: core.getInput('body-template'),
@@ -96,8 +97,8 @@ async function run() {
 
     if (updateTitle) {
       request.title = ({
-        prefix: processedTitleText.concat(title),
-        suffix: title.concat(processedTitleText),
+        prefix: processedTitleText.concat(inputs.titleInsertSpace ? ' ': '', title),
+        suffix: title.concat(inputs.titleInsertSpace ? ' ': '', processedTitleText),
         replace: processedTitleText,
       })[inputs.titleUpdateAction];
       core.info(`New title: ${request.title}`);

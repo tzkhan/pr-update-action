@@ -28,6 +28,10 @@ inputs:
     description: "Update action to perform on the title. Allowed values: prefix | suffix | replace"
     required: false
     default: "prefix"
+  title-insert-space:
+    description: "Should insert a space between title and its prefix or suffix"
+    required: false
+    default: "true"
   title-uppercase-base-match:
     description: "Should uppercase matched text from base branch in title"
     required: false
