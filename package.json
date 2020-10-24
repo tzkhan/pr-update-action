@@ -25,7 +25,7 @@
   "homepage": "https://github.com/tzkhan/pr-update-action/#readme",
   "dependencies": {
     "@actions/core": "^1.1.1",
-    "@actions/github": "^1.1.0"
+    "@actions/github": "^4.0.0"
   },
   "devDependencies": {
     "@vercel/ncc": "^0.24.0",
