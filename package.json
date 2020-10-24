@@ -1,10 +1,10 @@
 {
   "name": "pr-update-action",
-  "version": "1.1.1",
+  "version": "2.0.0",
   "description": "PR Update GitHub Action",
   "main": "index.js",
   "scripts": {
-    "build": "ncc build index.js",
+    "build": "ncc build index.js --out dist --minify --source-map --license licenses.txt",
     "lint": "eslint index.js",
     "test": "eslint index.js && jest"
   },
@@ -28,7 +28,8 @@
     "@actions/github": "^1.1.0"
   },
   "devDependencies": {
-    "eslint": "^6.3.0",
-    "jest": "^24.9.0"
+    "@vercel/ncc": "^0.24.0",
+    "eslint": "^7.4.0",
+    "jest": "^26.1.0"
   }
 }
