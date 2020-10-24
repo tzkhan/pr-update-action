@@ -66,12 +66,11 @@ jobs:
         base-branch-regex: '[a-z\d-_.\\/]+'
         head-branch-regex: 'foo-\d+'
         title-template: '[%headbranch%] '
-        title-update-action: 'prefix'
         body-template: |
           Merging into '%basebranch%'
           [Link to %headbranch%](https://url/to/browse/ticket/%headbranch%)
         body-update-action: 'suffix'
-        body-newline-count: 2
+        body-uppercase-base-match: false
 ```
 
 produces this effect... :point_down:
