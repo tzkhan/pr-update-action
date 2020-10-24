@@ -7,36 +7,27 @@ This is a GitHub Action that updates a pull request with information extracted f
 
 ## Usage
 
-### Create Workflow
+Create a workflow yaml file (eg: `.github/workflows/update-pr.yml` see [Creating a Workflow file](https://docs.github.com/en/free-pro-team@latest/actions/learn-github-actions/introduction-to-github-actions#create-an-example-workflow)).
 
-Create a workflow yaml file (eg: `.github/workflows/update-pr.yml` see [Creating a Workflow file](https://docs.github.com/en/free-pro-team@latest/actions/learn-github-actions/introduction-to-github-actions#create-an-example-workflow)):
+### Inputs
 
-```
-name: "Update Pull Request"
+#### Required
+- `repo-token`: secret token to allow the action to make calls to GitHub's rest API - set it to `${{ secrets.GITHUB_TOKEN }}`
 
-on: pull_request
-
-jobs:
-  update_pr:
-    runs-on: ubuntu-latest
-    steps:
-    - uses: tzkhan/pr-update-action@v2
-      with:
-        repo-token: '${{ secrets.GITHUB_TOKEN }}'   # required - allows the action to make calls to GitHub's rest API
-        base-branch-regex: ''                       # optional - regex to match text from the base branch name
-        head-branch-regex: ''                       # optional - regex to match text from the head branch name
-        lowercase-branch: true                      # optional - whether to lowercase branch name before matching
-        title-template: ''                          # optional - text template to update title with
-        title-update-action: 'prefix'               # optional - whether to prefix or suffix or replace title with title-template
-        title-insert-space: true                    # optional - whether to insert a space between title and its prefix or suffix
-        title-uppercase-base-match: true            # optional - whether to uppercase matched text from base branch in title
-        title-uppercase-head-match: true            # optional - whether to uppercase matched text from head branch in title
-        body-template: ''                           # optional - text template to update body with
-        body-update-action: 'prefix'                # optional - whether to prefix or replace body with body-template
-        body-newline-count: 2                       # optional - number of newlines to separate body and its prefix or suffix
-        body-uppercase-base-match: true             # optional - whether to uppercase matched text from base branch in body
-        body-uppercase-head-match: true             # optional - whether to uppercase matched text from head branch in body
-```
+#### Optional
+- `base-branch-regex`: regex to match text from the base branch name
+- `head-branch-regex`: regex to match text from the head branch name
+- `lowercase-branch`: whether to lowercase branch name before matching - defaults to `true`
+- `title-template`: text template to update title with
+- `title-update-action`: whether to prefix or suffix or replace title with title-template - defaults to `prefix`
+- `title-insert-space`: whether to insert a space between title and its prefix or suffix - defaults to `true`
+- `title-uppercase-base-match`: whether to uppercase matched text from base branch in title - defaults to `true`
+- `title-uppercase-head-match`: whether to uppercase matched text from head branch in title - defaults to `true`
+- `body-template`: text template to update body with
+- `body-update-action`: whether to prefix or replace body with body-template - defaults to `prefix`
+- `body-newline-count`: number of newlines to separate body and its prefix or suffix - defaults to `2`
+- `body-uppercase-base-match`: whether to uppercase matched text from base branch in body - defaults to `true`
+- `body-uppercase-head-match`: whether to uppercase matched text from head branch in body - defaults to `true`
 
 #### Notes:
 
@@ -48,13 +39,14 @@ jobs:
   - `prefix`
   - `suffix`
   - `replace`
-- The following outputs are available:
-  - `baseMatch`: Matched text from base branch if any
-  - `headMatch`: Matched text from head branch if any
-  - `titleUpdated`: Whether the PR title was updated
-  - `bodyUpdated`: Whether the PR body was updated
+- `body-template` can be set to a GitHub secret if necessary to avoid leaking sensitive data. `body-template: ${{ secrets.PR_BODY_TEMPLATE }}`
 
-**Tip**: `body-template` can be set to a GitHub secret if necessary to avoid leaking sensitive data. `body-template: ${{ secrets.PR_BODY_PREFIX_TEMPLATE }}`
+### Outputs
+
+- `baseMatch`: matched text from base branch if any
+- `headMatch`: matched text from head branch if any
+- `titleUpdated`: whether the PR title was updated
+- `bodyUpdated`: whether the PR body was updated
 
 ## Example
 
@@ -65,7 +57,7 @@ name: "Update Pull Request"
 on: pull_request
 
 jobs:
-  pr_update_text:
+  update_pr:
     runs-on: ubuntu-latest
     steps:
     - uses: tzkhan/pr-update-action@v2
