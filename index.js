@@ -110,7 +110,7 @@ async function run() {
     const processedBodyText = inputs.bodyTemplate
       .replace(baseTokenRegex, upperCase(inputs.bodyUppercaseBaseMatch, matches.baseMatch))
       .replace(headTokenRegex, upperCase(inputs.bodyUppercaseHeadMatch, matches.headMatch));
-    core.debug(`Processed body text: ${processedBodyText}`);
+    core.info(`Processed body text: ${processedBodyText}`);
 
     const updateBody = ({
       prefix: !body.toLowerCase().startsWith(processedBodyText.toLowerCase()),

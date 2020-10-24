@@ -4,7 +4,7 @@
   "description": "PR Update GitHub Action",
   "main": "index.js",
   "scripts": {
-    "build": "ncc build index.js --out dist --source-map",
+    "build": "ncc build index.js --out dist",
     "lint": "eslint index.js",
     "test": "eslint index.js && jest"
   },
