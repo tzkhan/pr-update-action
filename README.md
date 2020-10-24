@@ -12,7 +12,7 @@ Create a workflow yaml file (for e.g. `.github/workflows/update-pr.yml`). See [C
 ### Inputs
 
 #### Required
-- `repo-token`: secret token to allow the action to make calls to GitHub's rest API - for e.g. `${{ secrets.GITHUB_TOKEN }}`
+- `repo-token`: secret token to allow the action to make calls to GitHub's rest API (for e.g. `${{ secrets.GITHUB_TOKEN }}`)
 
 #### Optional
 - `base-branch-regex`: regex to match text from the base branch name
