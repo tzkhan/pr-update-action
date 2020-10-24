@@ -23,6 +23,7 @@ jobs:
     - uses: tzkhan/pr-update-action@v1.1.1
       with:
         repo-token: "${{ secrets.GITHUB_TOKEN }}"                   # required - allows the action to make calls to GitHub's rest API
+        use-base-branch: false                                      # required - whether to use target or pr for branch name
         branch-regex: 'foo-\d+'                                     # required - regex to match text from the head branch name
         lowercase-branch: true                                      # optional - whether to lowercase branch name before matching
         title-template: '[%branch%]'                                # required - text template to update title with
