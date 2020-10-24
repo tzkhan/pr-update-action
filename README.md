@@ -9,7 +9,7 @@ This is a GitHub Action that updates a pull request with information extracted f
 
 ### Create Workflow
 
-Create a workflow yaml file (eg: `.github/workflows/update-pr.yml` see [Creating a Workflow file](https://help.github.com/en/articles/configuring-a-workflow#creating-a-workflow-file)):
+Create a workflow yaml file (eg: `.github/workflows/update-pr.yml` see [Creating a Workflow file](https://docs.github.com/en/free-pro-team@latest/actions/learn-github-actions/introduction-to-github-actions#create-an-example-workflow)):
 
 ```
 name: "Update Pull Request"
@@ -41,17 +41,17 @@ jobs:
 
 - Value for at least one of `base-branch-regex` or `head-branch-regex` should be provided, otherwise the action will return an error. The value should be a [Javascript regular expression](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Regular_Expressions).
 - `title-template` and `body-template` can contain any of the following tokens (can be repeated if required) which will be replaced by the matched text from branch name:
- - `%basebranch%`
- - `%headbranch%`
+  - `%basebranch%`
+  - `%headbranch%`
 - `title-update-action` and `body-update-action` can be set to one of the following values:
- - `prefix`
- - `suffix`
- - `replace`
+  - `prefix`
+  - `suffix`
+  - `replace`
 - The following outputs are available:
- - `baseMatch`: Matched text from base branch if any
- - `headMatch`: Matched text from head branch if any
- - `titleUpdated`: Whether the PR title was updated
- - `bodyUpdated`: Whether the PR body was updated
+  - `baseMatch`: Matched text from base branch if any
+  - `headMatch`: Matched text from head branch if any
+  - `titleUpdated`: Whether the PR title was updated
+  - `bodyUpdated`: Whether the PR body was updated
 
 **Tip**: `body-template` can be set to a GitHub secret if necessary to avoid leaking sensitive data. `body-template: ${{ secrets.PR_BODY_PREFIX_TEMPLATE }}`
 
