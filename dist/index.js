@@ -7702,7 +7702,7 @@ async function run() {
       replace: title.toLowerCase() !== processedTitleText.toLowerCase(),
     })[inputs.titleUpdateAction] || false;
 
-    core.setOutput('titleUpdated', updateTitle);
+    core.setOutput('titleUpdated', updateTitle.toString());
 
     if (updateTitle) {
       request.title = ({
@@ -7727,7 +7727,7 @@ async function run() {
       replace: body.toLowerCase() !== processedBodyText.toLowerCase(),
     })[inputs.bodyUpdateAction] || false;
 
-    core.setOutput('bodyUpdated', updateBody);
+    core.setOutput('bodyUpdated', updateBody.toString());
 
     if (updateBody) {
       request.body = ({
