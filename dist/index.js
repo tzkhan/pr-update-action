@@ -1347,8 +1347,8 @@ async function run() {
       return;
     }
 
-    const client = new github.GitHub(inputs.token);
-    const response = await client.pulls.update(request);
+    const octokit = github.getOctokit(inputs.token);
+    const response = await octokit.pulls.update(request);
 
     core.info(`Response: ${response.status}`);
     if (response.status !== 200) {
