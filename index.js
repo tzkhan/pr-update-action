@@ -1,33 +1,27 @@
 const core = require('@actions/core');
 const github = require('@actions/github');
 
+
 async function run() {
   try {
-    const baseTokenRegex = new RegExp('%basebranch%', "g");
-    const headTokenRegex = new RegExp('%headbranch%', "g");
+    const baseTokenRegex = (i) => new RegExp(`%base[${i}]%`, "g");
+    const headTokenRegex = (i) => new RegExp(`%head[${i}]%`, "g");
 
     const inputs = {
       token: core.getInput('repo-token', {required: true}),
-      baseBranchRegex: core.getInput('base-branch-regex'),
-      headBranchRegex: core.getInput('head-branch-regex'),
-      lowercaseBranch: (core.getInput('lowercase-branch').toLowerCase() === 'true'),
+      baseBranchRegexArr: JSON.parse(core.getInput('base-branch-regex-arr').trim()),
+      headBranchRegexArr: JSON.parse(core.getInput('head-branch-regex-arr').trim()),
       titleTemplate: core.getInput('title-template'),
       titleUpdateAction: core.getInput('title-update-action').toLowerCase(),
       titleInsertSpace: (core.getInput('title-insert-space').toLowerCase() === 'true'),
-      titleUppercaseBaseMatch: (core.getInput('title-uppercase-base-match').toLowerCase() === 'true'),
-      titleUppercaseHeadMatch: (core.getInput('title-uppercase-head-match').toLowerCase() === 'true'),
       bodyTemplate: core.getInput('body-template'),
       bodyUpdateAction: core.getInput('body-update-action').toLowerCase(),
-      bodyNewlineCount: parseInt(core.getInput('body-newline-count')),
-      bodyUppercaseBaseMatch: (core.getInput('body-uppercase-base-match').toLowerCase() === 'true'),
-      bodyUppercaseHeadMatch: (core.getInput('body-uppercase-head-match').toLowerCase() === 'true'),
+      bodyNewlineCount: parseInt(core.getInput('body-newline-count') || 2),
     }
 
-    const baseBranchRegex = inputs.baseBranchRegex.trim();
-    const matchBaseBranch = baseBranchRegex.length > 0;
-
-    const headBranchRegex = inputs.headBranchRegex.trim();
-    const matchHeadBranch = headBranchRegex.length > 0;
+    const { baseBranchRegexArr, headBranchRegexArr } = inputs;
+    const matchBaseBranch = Array.isArray(baseBranchRegexArr) && baseBranchRegexArr.length > 0;
+    const matchHeadBranch = Array.isArray(headBranchRegexArr) && headBranchRegexArr.length > 0;
 
     if (!matchBaseBranch && !matchHeadBranch) {
       core.setFailed('No branch regex values have been specified');
@@ -35,42 +29,49 @@ async function run() {
     }
 
     const matches = {
-      baseMatch: '',
-      headMatch: '',
+      base: [],
+      head: [],
     }
 
+    let matchFail;
+
     if (matchBaseBranch) {
-      const baseBranchName = github.context.payload.pull_request.base.ref;
-      const baseBranch = inputs.lowercaseBranch ? baseBranchName.toLowerCase() : baseBranchName;
+      const baseBranch = github.context.payload.pull_request.base.ref;
       core.info(`Base branch: ${baseBranch}`);
 
-      const baseMatches = baseBranch.match(new RegExp(baseBranchRegex));
-      if (!baseMatches) {
-        core.setFailed('Base branch name does not match given regex');
-        return;
-      }
+      matches.base = baseBranchRegexArr.map(regex => {
+        const match = baseBranch.match(new RegExp(regex))
+        if (!match) {
+          core.setFailed(`Base branch name does not match given regex: ${regex}`);
+          matchFail = true;
+        }        
+      });
 
-      matches.baseMatch = baseMatches[0];
-      core.info(`Matched base branch text: ${matches.baseMatch}`);
+      if (matchFail) return;
 
-      core.setOutput('baseMatch', matches.baseMatch);
+      core.info(`Matched base branch text: ${matches.base}`);
+
+      core.setOutput('baseMatch', matches.base);
     }
 
     if (matchHeadBranch) {
-      const headBranchName = github.context.payload.pull_request.head.ref;
-      const headBranch = inputs.lowercaseBranch ? headBranchName.toLowerCase() : headBranchName;
+      const headBranch = github.context.payload.pull_request.head.ref;
       core.info(`Head branch: ${headBranch}`);
 
-      const headMatches = headBranch.match(new RegExp(headBranchRegex));
-      if (!headMatches) {
-        core.setFailed('Head branch name does not match given regex');
-        return;
-      }
+      matches.head = headBranchRegexArr.map(regex => {
+        const match = headBranch.match(new RegExp(regex))
+        if (!match) {
+          core.setFailed(`Head branch name does not match given regex: ${regex}`);
+          matchFail = true;
+        }        
+      });
 
-      matches.headMatch = headMatches[0];
-      core.info(`Matched head branch text: ${matches.headMatch}`);
 
-      core.setOutput('headMatch', matches.headMatch);
+      if (matchFail) return;
+
+      core.info(`Matched head branch text: ${matches.head}`);
+
+      core.setOutput('headMatch', matches.head);
     }
 
     const request = {
@@ -82,9 +83,9 @@ async function run() {
     const upperCase = (upperCase, text) => upperCase ? text.toUpperCase() : text;
 
     const title = github.context.payload.pull_request.title || '';
-    const processedTitleText = inputs.titleTemplate
-      .replace(baseTokenRegex, upperCase(inputs.titleUppercaseBaseMatch, matches.baseMatch))
-      .replace(headTokenRegex, upperCase(inputs.titleUppercaseHeadMatch, matches.headMatch));
+    let processedTitleText = inputs.titleTemplate;
+    matches.base.forEach((match, i) => processedTitleText = processedTitleText.replace(baseTokenRegex(i), match));
+    matches.head.forEach((match, i) => processedTitleText = processedTitleText.replace(headTokenRegex(i), match));
     core.info(`Processed title text: ${processedTitleText}`);
 
     const updateTitle = ({
@@ -107,9 +108,9 @@ async function run() {
     }
 
     const body = github.context.payload.pull_request.body || '';
-    const processedBodyText = inputs.bodyTemplate
-      .replace(baseTokenRegex, upperCase(inputs.bodyUppercaseBaseMatch, matches.baseMatch))
-      .replace(headTokenRegex, upperCase(inputs.bodyUppercaseHeadMatch, matches.headMatch));
+    let processedBodyText = inputs.bodyTemplate;
+    matches.base.forEach((match, i) => processedBodyText = processedBodyText.replace(baseTokenRegex(i), match));
+    matches.head.forEach((match, i) => processedBodyText = processedBodyText.replace(headTokenRegex(i), match));
     core.info(`Processed body text: ${processedBodyText}`);
 
     const updateBody = ({
