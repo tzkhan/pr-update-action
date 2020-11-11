@@ -1,6 +1,6 @@
-name: "Pull Request Updater GitHub Action"
+name: "PR from branch name"
 description: "GitHub Action that updates a pull request with information extracted from branch name"
-author: "Tamim Khan"
+author: "Tamim Khan > Ben Cooley"
 runs:
   using: "node12"
   main: "dist/index.js"
@@ -8,18 +8,14 @@ inputs:
   repo-token:
     description: "The GITHUB_TOKEN secret"
     required: true
-  base-branch-regex:
-    description: "Regex to match text in the base branch name"
+  base-branch-regex-arr:
+    description: "An Array of Regex to match text in the base branch name"
     required: false
     default: ""
-  head-branch-regex:
-    description: "Regex to match text in the head branch name"
+  head-branch-regex-arr:
+    description: "An Array of Regex to match text in the head branch name"
     required: false
     default: ""
-  lowercase-branch:
-    description: "Should lowercase branch name before matching text"
-    required: false
-    default: "true"
   title-template:
     description: "Title template where matched text from branch gets substituted in. Allowed tokens: %basebranch% | %headbranch%"
     required: false
@@ -30,14 +26,6 @@ inputs:
     default: "prefix"
   title-insert-space:
     description: "Should insert a space between title and its prefix or suffix"
-    required: false
-    default: "true"
-  title-uppercase-base-match:
-    description: "Should uppercase matched text from base branch in title"
-    required: false
-    default: "true"
-  title-uppercase-head-match:
-    description: "Should uppercase matched text from head branch in title"
     required: false
     default: "true"
   body-template:
@@ -52,14 +40,6 @@ inputs:
     description: "Number of newlines to separate body and its prefix or suffix"
     required: false
     default: "2"
-  body-uppercase-base-match:
-    description: "Should uppercase matched text from base branch in body"
-    required: false
-    default: "true"
-  body-uppercase-head-match:
-    description: "Should uppercase matched text from head branch in body"
-    required: false
-    default: "true"
 outputs:
   baseMatch:
     description: "Matched text from base branch if any"
