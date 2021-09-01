@@ -6057,6 +6057,7 @@ async function run() {
         prefix: processedTitleText.concat(inputs.titleInsertSpace ? ' ': '', title),
         suffix: title.concat(inputs.titleInsertSpace ? ' ': '', processedTitleText),
         replace: processedTitleText,
+        remove: title.replace(processedTitleText, ''),
       })[inputs.titleUpdateAction];
       core.info(`New title: ${request.title}`);
     } else {
@@ -6082,6 +6083,7 @@ async function run() {
         prefix: processedBodyText.concat('\n'.repeat(inputs.bodyNewlineCount), body),
         suffix: body.concat('\n'.repeat(inputs.bodyNewlineCount), processedBodyText),
         replace: processedBodyText,
+        remove: body.replace(processedBodyText, ''),
       })[inputs.bodyUpdateAction];
       core.debug(`New body: ${request.body}`);
     } else {

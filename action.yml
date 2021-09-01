@@ -33,7 +33,7 @@ inputs:
     required: false
     default: ""
   title-update-action:
-    description: "Update action to perform on the title. Allowed values: prefix | suffix | replace"
+    description: "Update action to perform on the title. Allowed values: prefix | suffix | replace | remove"
     required: false
     default: "prefix"
   title-insert-space:
@@ -53,7 +53,7 @@ inputs:
     required: false
     default: ""
   body-update-action:
-    description: "Update action to perform on the body. Allowed values: prefix | suffix | replace"
+    description: "Update action to perform on the body. Allowed values: prefix | suffix | replace | remove"
     required: false
     default: "prefix"
   body-newline-count:
