@@ -5966,7 +5966,7 @@ async function run() {
       bodyUppercaseHeadMatch: (core.getInput('body-uppercase-head-match').toLowerCase() === 'true'),
     }
 
-    core.info(`inputs: ${inputs}`)
+    core.info(`inputs: ${JSON.stringify(inputs)}`)
 
     const octokit = github.getOctokit(inputs.token);
 
@@ -5991,7 +5991,7 @@ async function run() {
       repo: inputs.repo,
       pull_number: inputs.number,
     };
-    core.info(`getPullRequestRequest: ${getPullRequestRequest}`)
+    core.info(`getPullRequestRequest: ${JSON.stringify(getPullRequestRequest)}`)
     const getPullRequestResponse = await octokit.pulls.get(getPullRequestRequest);
 
     if (getPullRequestResponse.status !== 200) {
