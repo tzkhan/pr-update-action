@@ -108,6 +108,7 @@ async function run() {
       prefix: !title.toLowerCase().startsWith(processedTitleText.toLowerCase()),
       suffix: !title.toLowerCase().endsWith(processedTitleText.toLowerCase()),
       replace: title.toLowerCase() !== processedTitleText.toLowerCase(),
+      remove: title.replace(processedTitleText, '') !== title,
     })[inputs.titleUpdateAction] || false;
 
     core.setOutput('titleUpdated', updateTitle.toString());
@@ -134,6 +135,7 @@ async function run() {
       prefix: !body.toLowerCase().startsWith(processedBodyText.toLowerCase()),
       suffix: !body.toLowerCase().endsWith(processedBodyText.toLowerCase()),
       replace: body.toLowerCase() !== processedBodyText.toLowerCase(),
+      remove: body.replace(processedBodyText, '') !== body,
     })[inputs.bodyUpdateAction] || false;
 
     core.setOutput('bodyUpdated', updateBody.toString());
