@@ -39,6 +39,7 @@ Create a workflow yaml file (for e.g. `.github/workflows/update-pr.yml`). See [C
   - `prefix`
   - `suffix`
   - `replace`
+  - `remove`
 - `body-template` can be set to a GitHub secret if necessary to avoid leaking sensitive data. `body-template: ${{ secrets.PR_BODY_TEMPLATE }}`
 
 ### Outputs

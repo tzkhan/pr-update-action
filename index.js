@@ -8,6 +8,9 @@ async function run() {
 
     const inputs = {
       token: core.getInput('repo-token', {required: true}),
+      owner: core.getInput('repo') === '' ? github.context.repo.owner : core.getInput('repo').split('/')[0],
+      repo: core.getInput('repo') === '' ? github.context.repo.repo : core.getInput('repo').split('/')[1],
+      number: core.getInput('number') === '' ? github.context.payload.pull_request.number : parseInt(core.getInput('number')),
       baseBranchRegex: core.getInput('base-branch-regex'),
       headBranchRegex: core.getInput('head-branch-regex'),
       lowercaseBranch: (core.getInput('lowercase-branch').toLowerCase() === 'true'),
@@ -22,6 +25,8 @@ async function run() {
       bodyUppercaseBaseMatch: (core.getInput('body-uppercase-base-match').toLowerCase() === 'true'),
       bodyUppercaseHeadMatch: (core.getInput('body-uppercase-head-match').toLowerCase() === 'true'),
     }
+
+    const octokit = github.getOctokit(inputs.token);
 
     const baseBranchRegex = inputs.baseBranchRegex.trim();
     const matchBaseBranch = baseBranchRegex.length > 0;
@@ -39,8 +44,20 @@ async function run() {
       headMatch: '',
     }
 
+    const getPullRequestRequest = {
+      owner: inputs.owner,
+      repo: inputs.repo,
+      pull_number: inputs.number,
+    };
+    const getPullRequestResponse = await octokit.pulls.get(getPullRequestRequest);
+
+    if (getPullRequestResponse.status !== 200) {
+      core.error(`Get pull request ${inputs.number} from repo ${inputs.owner}/${inputs.repo} has failed`);
+    }
+
     if (matchBaseBranch) {
-      const baseBranchName = github.context.payload.pull_request.base.ref;
+
+      const baseBranchName = getPullRequestResponse.data.base.ref;
       const baseBranch = inputs.lowercaseBranch ? baseBranchName.toLowerCase() : baseBranchName;
       core.info(`Base branch: ${baseBranch}`);
 
@@ -57,7 +74,7 @@ async function run() {
     }
 
     if (matchHeadBranch) {
-      const headBranchName = github.context.payload.pull_request.head.ref;
+      const headBranchName = getPullRequestResponse.data.head.ref;
       const headBranch = inputs.lowercaseBranch ? headBranchName.toLowerCase() : headBranchName;
       core.info(`Head branch: ${headBranch}`);
 
@@ -74,14 +91,14 @@ async function run() {
     }
 
     const request = {
-      owner: github.context.repo.owner,
-      repo: github.context.repo.repo,
-      pull_number: github.context.payload.pull_request.number,
+      owner: inputs.owner,
+      repo: inputs.repo,
+      pull_number: inputs.number,
     }
 
     const upperCase = (upperCase, text) => upperCase ? text.toUpperCase() : text;
 
-    const title = github.context.payload.pull_request.title || '';
+    const title = getPullRequestResponse.data.title || '';
     const processedTitleText = inputs.titleTemplate
       .replace(baseTokenRegex, upperCase(inputs.titleUppercaseBaseMatch, matches.baseMatch))
       .replace(headTokenRegex, upperCase(inputs.titleUppercaseHeadMatch, matches.headMatch));
@@ -91,6 +108,7 @@ async function run() {
       prefix: !title.toLowerCase().startsWith(processedTitleText.toLowerCase()),
       suffix: !title.toLowerCase().endsWith(processedTitleText.toLowerCase()),
       replace: title.toLowerCase() !== processedTitleText.toLowerCase(),
+      remove: title.replace(processedTitleText, '') !== title,
     })[inputs.titleUpdateAction] || false;
 
     core.setOutput('titleUpdated', updateTitle.toString());
@@ -100,13 +118,14 @@ async function run() {
         prefix: processedTitleText.concat(inputs.titleInsertSpace ? ' ': '', title),
         suffix: title.concat(inputs.titleInsertSpace ? ' ': '', processedTitleText),
         replace: processedTitleText,
+        remove: title.replace(processedTitleText, ''),
       })[inputs.titleUpdateAction];
       core.info(`New title: ${request.title}`);
     } else {
       core.warning('No updates were made to PR title');
     }
 
-    const body = github.context.payload.pull_request.body || '';
+    const body = getPullRequestResponse.data.body || '';
     const processedBodyText = inputs.bodyTemplate
       .replace(baseTokenRegex, upperCase(inputs.bodyUppercaseBaseMatch, matches.baseMatch))
       .replace(headTokenRegex, upperCase(inputs.bodyUppercaseHeadMatch, matches.headMatch));
@@ -116,6 +135,7 @@ async function run() {
       prefix: !body.toLowerCase().startsWith(processedBodyText.toLowerCase()),
       suffix: !body.toLowerCase().endsWith(processedBodyText.toLowerCase()),
       replace: body.toLowerCase() !== processedBodyText.toLowerCase(),
+      remove: body.replace(processedBodyText, '') !== body,
     })[inputs.bodyUpdateAction] || false;
 
     core.setOutput('bodyUpdated', updateBody.toString());
@@ -125,6 +145,7 @@ async function run() {
         prefix: processedBodyText.concat('\n'.repeat(inputs.bodyNewlineCount), body),
         suffix: body.concat('\n'.repeat(inputs.bodyNewlineCount), processedBodyText),
         replace: processedBodyText,
+        remove: body.replace(processedBodyText, ''),
       })[inputs.bodyUpdateAction];
       core.debug(`New body: ${request.body}`);
     } else {
@@ -135,7 +156,6 @@ async function run() {
       return;
     }
 
-    const octokit = github.getOctokit(inputs.token);
     const response = await octokit.pulls.update(request);
 
     core.info(`Response: ${response.status}`);
