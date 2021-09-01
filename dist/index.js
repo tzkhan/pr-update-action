@@ -5966,6 +5966,8 @@ async function run() {
       bodyUppercaseHeadMatch: (core.getInput('body-uppercase-head-match').toLowerCase() === 'true'),
     }
 
+    core.info(`inputs: ${inputs}`)
+
     const octokit = github.getOctokit(inputs.token);
 
     const baseBranchRegex = inputs.baseBranchRegex.trim();
@@ -5984,11 +5986,13 @@ async function run() {
       headMatch: '',
     }
 
-    const getPullRequestResponse = await octokit.pulls.get({
+    const getPullRequestRequest = {
       owner: inputs.owner,
       repo: inputs.repo,
       pull_number: inputs.number,
-    });
+    };
+    core.info(`getPullRequestRequest: ${getPullRequestRequest}`)
+    const getPullRequestResponse = await octokit.pulls.get(getPullRequestRequest);
 
     if (getPullRequestResponse.status !== 200) {
       core.error(`Get pull request ${inputs.number} from repo ${inputs.owner}/${inputs.repo} has failed`);
@@ -6037,7 +6041,7 @@ async function run() {
 
     const upperCase = (upperCase, text) => upperCase ? text.toUpperCase() : text;
 
-    const title = github.context.payload.pull_request.title || '';
+    const title = getPullRequestResponse.data.title || '';
     const processedTitleText = inputs.titleTemplate
       .replace(baseTokenRegex, upperCase(inputs.titleUppercaseBaseMatch, matches.baseMatch))
       .replace(headTokenRegex, upperCase(inputs.titleUppercaseHeadMatch, matches.headMatch));
@@ -6062,7 +6066,7 @@ async function run() {
       core.warning('No updates were made to PR title');
     }
 
-    const body = github.context.payload.pull_request.body || '';
+    const body = getPullRequestResponse.data.body || '';
     const processedBodyText = inputs.bodyTemplate
       .replace(baseTokenRegex, upperCase(inputs.bodyUppercaseBaseMatch, matches.baseMatch))
       .replace(headTokenRegex, upperCase(inputs.bodyUppercaseHeadMatch, matches.headMatch));
