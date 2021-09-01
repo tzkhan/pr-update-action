@@ -5,6 +5,14 @@ runs:
   using: "node12"
   main: "dist/index.js"
 inputs:
+  repo:
+    description: "Owner/Name of the repo"
+    required: false
+    default: ${{ github.repository }}
+  number:
+    description: "Pull request number"
+    required: false
+    default: ""
   repo-token:
     description: "The GITHUB_TOKEN secret"
     required: true

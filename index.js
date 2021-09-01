@@ -8,6 +8,9 @@ async function run() {
 
     const inputs = {
       token: core.getInput('repo-token', {required: true}),
+      owner: core.getInput('repo') === '' ? github.context.repo.owner : core.getInput('repo').split('/')[0],
+      repo: core.getInput('repo') === '' ? github.context.repo.repo : core.getInput('repo').split('/')[1],
+      number: core.getInput('number') === '' ? github.context.payload.pull_request.number : parseInt(core.getInput('number')),
       baseBranchRegex: core.getInput('base-branch-regex'),
       headBranchRegex: core.getInput('head-branch-regex'),
       lowercaseBranch: (core.getInput('lowercase-branch').toLowerCase() === 'true'),
@@ -22,6 +25,8 @@ async function run() {
       bodyUppercaseBaseMatch: (core.getInput('body-uppercase-base-match').toLowerCase() === 'true'),
       bodyUppercaseHeadMatch: (core.getInput('body-uppercase-head-match').toLowerCase() === 'true'),
     }
+
+    const octokit = github.getOctokit(inputs.token);
 
     const baseBranchRegex = inputs.baseBranchRegex.trim();
     const matchBaseBranch = baseBranchRegex.length > 0;
@@ -39,8 +44,19 @@ async function run() {
       headMatch: '',
     }
 
+    const getPullRequestResponse = await octokit.pulls.get({
+      owner: inputs.owner,
+      repo: inputs.repo,
+      pull_number: inputs.number,
+    });
+
+    if (getPullRequestResponse.status !== 200) {
+      core.error(`Get pull request ${inputs.number} from repo ${inputs.owner}/${inputs.repo} has failed`);
+    }
+
     if (matchBaseBranch) {
-      const baseBranchName = github.context.payload.pull_request.base.ref;
+
+      const baseBranchName = getPullRequestResponse.data.base.ref;
       const baseBranch = inputs.lowercaseBranch ? baseBranchName.toLowerCase() : baseBranchName;
       core.info(`Base branch: ${baseBranch}`);
 
@@ -57,7 +73,7 @@ async function run() {
     }
 
     if (matchHeadBranch) {
-      const headBranchName = github.context.payload.pull_request.head.ref;
+      const headBranchName = getPullRequestResponse.data.head.ref;
       const headBranch = inputs.lowercaseBranch ? headBranchName.toLowerCase() : headBranchName;
       core.info(`Head branch: ${headBranch}`);
 
@@ -74,9 +90,9 @@ async function run() {
     }
 
     const request = {
-      owner: github.context.repo.owner,
-      repo: github.context.repo.repo,
-      pull_number: github.context.payload.pull_request.number,
+      owner: inputs.owner,
+      repo: inputs.repo,
+      pull_number: inputs.number,
     }
 
     const upperCase = (upperCase, text) => upperCase ? text.toUpperCase() : text;
@@ -135,7 +151,6 @@ async function run() {
       return;
     }
 
-    const octokit = github.getOctokit(inputs.token);
     const response = await octokit.pulls.update(request);
 
     core.info(`Response: ${response.status}`);
