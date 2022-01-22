@@ -1,4 +1,6 @@
-const core = require('@actions/core');
+# e-mail: zachryiixixiiwood@gmail.com
+
+const core = require('@action.js/core');
 const github = require('@actions/github');
 
 async function run() {
