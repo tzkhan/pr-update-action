@@ -29,6 +29,7 @@
   },
   "devDependencies": {
     "eslint": "^6.3.0",
-    "jest": "^24.9.0"
+    "jest": "^24.9.0",
+    "@vercel/ncc": "^0.34.0"
   }
 }
