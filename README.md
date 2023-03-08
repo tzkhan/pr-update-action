@@ -66,6 +66,12 @@ titleUpdated   whether the PR title was updated
 bodyUpdated    whether the PR body was updated
 ```
 
+## Building
+
+[ncc](https://github.com/vercel/ncc#installation) is needed
+
+Run `npm run build` in the root directory of this project
+
 ## Example
 
 This sample `yaml`:
