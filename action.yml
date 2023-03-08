@@ -1,12 +1,12 @@
-name: "Pull Request Updater GitHub Action"
-description: "GitHub Action that updates a pull request with information extracted from branch name"
-author: "Tamim Khan"
+name: "Update Pull Request from Branch Name"
+description: "Updates a pull request with information extracted from branch name"
+author: "Jamie Wright"
 runs:
-  using: "node12"
+  using: "node16"
   main: "dist/index.js"
 inputs:
   repo-token:
-    description: "The GITHUB_TOKEN secret"
+    description: "[REQUIRED] The GITHUB_TOKEN secret, which is needed to access the repository"
     required: true
   base-branch-regex:
     description: "Regex to match text in the base branch name"
@@ -17,31 +17,31 @@ inputs:
     required: false
     default: ""
   lowercase-branch:
-    description: "Should lowercase branch name before matching text"
+    description: "Should the action make the branch name lowercase internally before matching"
     required: false
     default: "true"
   title-template:
-    description: "Title template where matched text from branch gets substituted in. Allowed tokens: %basebranch% | %headbranch%"
+    description: "Text to insert into the PR title. This is based on the matched text from `base-branch-regex` or `head-branch-regex`. You can use whatever text you like, along with the following tokens: %basebranch% | %headbranch%"
     required: false
     default: ""
   title-update-action:
-    description: "Update action to perform on the title. Allowed values: prefix | suffix | replace"
+    description: "Action to perform on the title. Allowed values: prefix | suffix | replace"
     required: false
     default: "prefix"
   title-insert-space:
-    description: "Should insert a space between title and its prefix or suffix"
+    description: "Should the action insert a space between title and its prefix/suffix"
     required: false
     default: "true"
   title-uppercase-base-match:
-    description: "Should uppercase matched text from base branch in title"
+    description: "Should the matched text from base branch be in uppercase in the title"
     required: false
     default: "true"
   title-uppercase-head-match:
-    description: "Should uppercase matched text from head branch in title"
+    description: "Should the matched text from head branch be in uppercase in the title"
     required: false
     default: "true"
   body-template:
-    description: "Body template where matched text from branch gets substituted in. Allowed tokens: %basebranch% | %headbranch%"
+    description: "Text to insert into the PR body. You can use whatever text you like, along with the following tokens: %basebranch% | %headbranch%"
     required: false
     default: ""
   body-update-action:
@@ -49,22 +49,22 @@ inputs:
     required: false
     default: "prefix"
   body-newline-count:
-    description: "Number of newlines to separate body and its prefix or suffix"
+    description: "Number of newlines to separate body and its prefix/suffix"
     required: false
     default: "2"
   body-uppercase-base-match:
-    description: "Should uppercase matched text from base branch in body"
+    description: "Should the matched text from base branch be in the body. This is a check and will not change anything."
     required: false
     default: "true"
   body-uppercase-head-match:
-    description: "Should uppercase matched text from head branch in body"
+    description: "Should the matched text from head branch be in the body. This is a check and will not change anything."
     required: false
     default: "true"
 outputs:
   baseMatch:
-    description: "Matched text from base branch if any"
+    description: "Matched text from base branch, if any"
   headMatch:
-    description: "Matched text from head branch if any"
+    description: "Matched text from head branch, if any"
   titleUpdated:
     description: "Whether the PR title was updated"
   bodyUpdated:
