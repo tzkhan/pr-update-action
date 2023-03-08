@@ -1,6 +1,5 @@
 const core = require("@actions/core");
 const github = require("@actions/github");
-const { Octokit } = require("@octokit/rest");
 
 async function run() {
   try {
@@ -84,7 +83,7 @@ async function run() {
       core.setOutput("headMatch", matches.headMatch);
     }
 
-    var request = {
+    const request = {
       owner: github.context.repo.owner,
       repo: github.context.repo.repo,
       pull_number: github.context.payload.pull_request.number,
@@ -175,9 +174,7 @@ async function run() {
       return;
     }
 
-    const octokit = new Octokit(); // <-- add this line
-    console.log(request);
-    console.log("crash here?");
+    const octokit = github.getOctokit(inputs.token);
     const response = await octokit.rest.pulls.update(request);
 
     core.info(`Response: ${response.status}`);
