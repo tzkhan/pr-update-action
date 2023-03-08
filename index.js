@@ -176,7 +176,7 @@ async function run() {
 
     const octokit = github.getOctokit(inputs.token);
     console.log("crash here?");
-    const response = await octokit.pulls.update(request);
+    const response = await octokit.rest.pulls.update(request);
 
     core.info(`Response: ${response.status}`);
     if (response.status !== 200) {
