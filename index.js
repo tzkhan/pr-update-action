@@ -176,6 +176,7 @@ async function run() {
     }
 
     const octokit = new Octokit(); // <-- add this line
+    console.log(request);
     console.log("crash here?");
     const response = await octokit.rest.pulls.update(request);
 
