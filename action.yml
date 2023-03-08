@@ -1,5 +1,5 @@
 name: "Update Pull Request from Branch Name"
-description: "Updates a pull request with information extracted from branch name"
+description: "Updates a pull request with information extracted from head and/or base branch name"
 author: "Jamie Wright"
 runs:
   using: "node16"
