@@ -1,5 +1,6 @@
 const core = require("@actions/core");
 const github = require("@actions/github");
+const { Octokit } = require("@octokit/rest");
 
 async function run() {
   try {
@@ -174,7 +175,7 @@ async function run() {
       return;
     }
 
-    const octokit = github.getOctokit(inputs.token);
+    const octokit = new Octokit(); // <-- add this line
     console.log("crash here?");
     const response = await octokit.rest.pulls.update(request);
 

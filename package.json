@@ -26,7 +26,8 @@
   "homepage": "https://github.com/the-wright-jamie/update-pr-info-action/#readme",
   "dependencies": {
     "@actions/core": "^1.10.0",
-    "@actions/github": "^5.1.1"
+    "@actions/github": "^5.1.1",
+    "@octokit/rest": "^19.0.7"
   },
   "devDependencies": {
     "eslint": "^8.35.0",
