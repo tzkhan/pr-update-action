@@ -165,7 +165,7 @@ async function run() {
         ),
         replace: processedBodyText,
       }[inputs.bodyUpdateAction];
-      core.debug(`New body: ${request.body}`);
+      core.info(`New body: ${request.body}`);
     } else {
       core.warning("No updates were made to PR body");
     }

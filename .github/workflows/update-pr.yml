@@ -1,5 +1,4 @@
 name: "Update Pull Request"
-
 on: pull_request
 
 permissions:
@@ -9,25 +8,15 @@ permissions:
 jobs:
   update_pr:
     runs-on: ubuntu-latest
-    outputs:
-      baseMatch: ${{ steps.update_pr.outputs.baseMatch }}
-      headMatch: ${{ steps.update_pr.outputs.headMatch }}
-      titleUpdated: ${{ steps.update_pr.outputs.titleUpdated }}
-      bodyUpdated: ${{ steps.update_pr.outputs.bodyUpdated }}
     steps:
-      - id: update_pr
-        uses: the-wright-jamie/update-pr-info-action@v1
+      - uses: the-wright-jamie/update-pr-info-action@v1
         with:
           repo-token: "${{ secrets.GITHUB_TOKEN }}"
-          head-branch-regex: '[a-z\d-_.\/]+'
-          title-template: "[updated-by-action] %headbranch%"
-          body-template: "[Updated by Pull Request Updater action] The head branch is [%headbranch%](https://the-wright-jamie.dev/)"
-  update_pr_outputs:
-    runs-on: ubuntu-latest
-    needs: update_pr
-    steps:
-      - run: |
-          echo 'baseMatch:' ${{needs.update_pr.outputs.baseMatch}}
-          echo 'headMatch:' ${{needs.update_pr.outputs.headMatch}}
-          echo 'titleUpdated:' ${{needs.update_pr.outputs.titleUpdated}}
-          echo 'bodyUpdated:' ${{needs.update_pr.outputs.bodyUpdated}}
+          base-branch-regex: '[a-z\d-_.\\/]+'
+          head-branch-regex: 'GO-\d+'
+          title-template: "[%headbranch%]"
+          body-template: |
+            Merging into '%basebranch%'
+            [Link to ticket: %headbranch%](https://example.com/%headbranch%)
+          body-update-action: "suffix"
+          body-uppercase-base-match: false

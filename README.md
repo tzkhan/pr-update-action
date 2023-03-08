@@ -1,35 +1,49 @@
 # Pull Request Updater
 
-![Update Pull Request](https://github.com/the-wright-jamie/update-pr-info-action/workflows/Update%20Pull%20Request/badge.svg)
-[![Release](https://img.shields.io/github/release/the-wright-jamie/update-pr-info-action.svg)](https://github.com/the-wright-jamie/update-pr-info-action/releases/latest)
+## Summary
 
 This is a GitHub Action that updates a pull request with information extracted from the head and/or base branch name. The pull request title and body can either have the extracted information prefixed or suffixed, or have them be replaced by the information entirely.
 
+The upstream for this action, [found here](https://github.com/tzkhan/pr-update-action), has been inactive since 2020 and the developer has no public commits since 2020. This fork will be kept active, and if I become unavailable me or someone on my behalf will archive this repo to let you know it's no longer being worked on.
+
 ## Usage
 
-Create a workflow `yaml` file (e.g. `.github/workflows/update-pr.yml`). See [Creating a Workflow file](https://docs.github.com/en/actions/learn-github-actions/understanding-github-actions#create-an-example-workflow) on the GitHub Docs.
+Make sure you set the permissions correctly otherwise the action won't be able to access the PR. See the example workflow file in this repo found at [`.github/workflows/update-pr.yml`](.github/workflows/update-pr.yml), or the [example section of this ReadMe](#example) to see how use this action.
 
-### Inputs
+### Required
 
-#### Required
+```text
+repo-token                  no default       secret token to allow making calls to GitHub's rest API (for e.g. `${{ secrets.GITHUB_TOKEN }}`)
+```
 
-- `repo-token`: secret token to allow making calls to GitHub's rest API (for e.g. `${{ secrets.GITHUB_TOKEN }}`)
+### Optional
 
-#### Optional
+```text
+RegEx Options
+------------------
+base-branch-regex           no default       regex to match text from the base branch name
+head-branch-regex           no default       regex to match text from the head branch name
 
-- `base-branch-regex`: regex to match text from the base branch name
-- `head-branch-regex`: regex to match text from the head branch name
-- `lowercase-branch`: whether to lowercase branch name internally before matching (default: `true`)
-- `title-template`: text template to update title with
-- `title-update-action`: whether to prefix, suffix or replace title with the `title-template` (default: `prefix`)
-- `title-insert-space`: whether to insert a space between title and its prefix or suffix (default: `true`)
-- `title-uppercase-base-match`: whether to make the matched text from the base branch uppercase in the title (default: `true`)
-- `title-uppercase-head-match`: whether to make the matched text from the head branch uppercase in the title (default: `true`)
-- `body-template`: text to insert into the PR body. You can use whatever text you like, along with the following tokens: `%basebranch%` | `%headbranch%`
-- `body-update-action`: whether to prefix, suffix or replace body with `body-template` (default: `prefix`)
-- `body-newline-count`: number of newlines to separate body and its prefix or suffix (default: `2`)
-- `body-uppercase-base-match`: whether to make the matched text from the base branch uppercase in the body (default: `true`)
-- `body-uppercase-head-match`: whether to make the matched text from the head branch uppercase in the body (default: `true`)
+Internal Options
+------------------
+lowercase-branch            default: true    whether to make the branch name lowercase internally before matching
+
+Title Options
+------------------
+title-template              no default       text to insert into/replace the title with. You can use whatever text you like, including any GitHub supported markdown, along with the following tokens: `%basebranch%` | `%headbranch%`
+title-update-action         default: prefix  whether to prefix, suffix or replace title with the `title-template`
+title-insert-space          default: true    whether to insert a space between title and its prefix or suffix
+title-uppercase-base-match  default: true    whether to make the matched text from the base branch uppercase in the title
+title-uppercase-head-match  default: true    whether to make the matched text from the head branch uppercase in the title
+
+Body Options
+------------------
+body-template               no default       text to insert into/replace the body with. You can use whatever text you like, including any GitHub supported markdown, along with the following tokens: `%basebranch%` | `%headbranch%`
+body-update-action          default: prefix  whether to prefix, suffix or replace body with `body-template`
+body-newline-count          default: 2       number of newlines to separate the body and its prefix or suffix
+body-uppercase-base-match   default: true    whether to make the matched text from the base branch uppercase in the body
+body-uppercase-head-match   default: true    whether to make the matched text from the head branch uppercase in the body
+```
 
 ## Notes
 
@@ -45,10 +59,12 @@ Create a workflow `yaml` file (e.g. `.github/workflows/update-pr.yml`). See [Cre
 
 ## Outputs
 
-- `baseMatch`: matched text from base branch if any
-- `headMatch`: matched text from head branch if any
-- `titleUpdated`: whether the PR title was updated
-- `bodyUpdated`: whether the PR body was updated
+```text
+baseMatch      matched text from base branch if any
+headMatch      matched text from head branch if any
+titleUpdated   whether the PR title was updated
+bodyUpdated    whether the PR body was updated
+```
 
 ## Example
 
@@ -58,6 +74,10 @@ This sample `yaml`:
 name: "Update Pull Request"
 on: pull_request
 
+permissions:
+  contents: read
+  pull-requests: write
+
 jobs:
   update_pr:
     runs-on: ubuntu-latest
@@ -66,11 +86,11 @@ jobs:
         with:
           repo-token: "${{ secrets.GITHUB_TOKEN }}"
           base-branch-regex: '[a-z\d-_.\\/]+'
-          head-branch-regex: 'foo-\d+'
+          head-branch-regex: 'GO-\d+'
           title-template: "[%headbranch%] "
           body-template: |
             Merging into '%basebranch%'
-            [Link to %headbranch%](https://url/to/browse/ticket/%headbranch%)
+            [Link to ticket: %headbranch%](https://example.com/%headbranch%)
           body-update-action: "suffix"
           body-uppercase-base-match: false
 ```
