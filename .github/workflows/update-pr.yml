@@ -12,12 +12,12 @@ jobs:
       bodyUpdated: ${{ steps.update_pr.outputs.bodyUpdated }}
     steps:
       - id: update_pr
-        uses: tzkhan/pr-update-action@v2
+        uses: the-wright-jamie/update-pr-info-action
         with:
           repo-token: "${{ secrets.GITHUB_TOKEN }}"
           head-branch-regex: '[a-z\d-_.\/]+'
           title-template: "[updated-by-action]"
-          body-template: "[Updated by Pull Request Updater action]"
+          body-template: "[Updated by Pull Request Updater action] The head branch is %headbranch% and the base branch is %basebranch%"
   update_pr_outputs:
     runs-on: ubuntu-latest
     needs: update_pr
