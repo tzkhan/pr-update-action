@@ -17,7 +17,7 @@ inputs:
     required: false
     default: ""
   lowercase-branch:
-    description: "Should make the branch name lowercase before matching"
+    description: "Should the action make the branch name lowercase internally before matching"
     required: false
     default: "true"
   title-template:
@@ -33,15 +33,15 @@ inputs:
     required: false
     default: "true"
   title-uppercase-base-match:
-    description: "Should the matched text from base branch be in the title. This is a check and will not update anything."
+    description: "Should the matched text from base branch be in uppercase in the title"
     required: false
     default: "true"
   title-uppercase-head-match:
-    description: "Should the matched text from head branch be in the title. This is a check and will not update anything"
+    description: "Should the matched text from head branch be in uppercase in the title"
     required: false
     default: "true"
   body-template:
-    description: "Text to insert into the PR body. This is based on the matched text from `base-branch-regex` or `head-branch-regex`. You can use whatever text you like, along with the following tokens: %basebranch% | %headbranch%"
+    description: "Text to insert into the PR body. You can use whatever text you like, along with the following tokens: %basebranch% | %headbranch%"
     required: false
     default: ""
   body-update-action:
