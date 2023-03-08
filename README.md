@@ -93,12 +93,11 @@ jobs:
           repo-token: "${{ secrets.GITHUB_TOKEN }}"
           base-branch-regex: '[a-z\d-_.\\/]+'
           head-branch-regex: 'GO-\d+'
-          title-template: "[%headbranch%] "
+          title-template: "[%headbranch%]"
           body-template: |
             Merging into '%basebranch%'
             [Link to ticket: %headbranch%](https://example.com/%headbranch%)
           body-update-action: "suffix"
-          body-uppercase-base-match: false
 ```
 
 produces the following effect... :point_down:
