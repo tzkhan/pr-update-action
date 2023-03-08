@@ -16,7 +16,7 @@ jobs:
         with:
           repo-token: "${{ secrets.GITHUB_TOKEN }}"
           head-branch-regex: '[a-z\d-_.\/]+'
-          title-template: "[updated-by-action] %headbranch% → %basebranch%"
+          title-template: "[updated-by-action] %headbranch%"
           body-template: "[Updated by Pull Request Updater action] The head branch is [%headbranch%](https://the-wright-jamie.dev/)"
   update_pr_outputs:
     runs-on: ubuntu-latest
