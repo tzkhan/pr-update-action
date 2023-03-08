@@ -4,7 +4,7 @@
 
 This is a GitHub Action that updates a pull request with information extracted from the head and/or base branch name. The pull request title and body can either have the extracted information prefixed or suffixed, or have them be replaced by the information entirely.
 
-The upstream for this action, [found here](https://github.com/tzkhan/pr-update-action), has been inactive since 2020 and the developer has no public commits since 2020. This fork will be kept active, and if I become unavailable me or someone on my behalf will archive this repo to let you know it's no longer being worked on.
+The upstream for this action, [found here](https://github.com/tzkhan/pr-update-action), has been inactive since 2020 and the developer has no public commits since 2020. This fork will be kept active, and if I become unavailable me or someone on my behalf will archive this repo to let you know it's no longer being worked on. **This is a mostly drop-in replacement for that action - you just need to specify permissions as seen in the [example](#example)**.
 
 ## Usage
 
