@@ -12,7 +12,7 @@ jobs:
       bodyUpdated: ${{ steps.update_pr.outputs.bodyUpdated }}
     steps:
       - id: update_pr
-        uses: the-wright-jamie/update-pr-info-action
+        uses: the-wright-jamie/update-pr-info-action@v1
         with:
           repo-token: "${{ secrets.GITHUB_TOKEN }}"
           head-branch-regex: '[a-z\d-_.\/]+'
