@@ -1,74 +1,46 @@
-name: "Pull Request Updater GitHub Action"
-description: "GitHub Action that updates a pull request with information extracted from branch name"
+name: "GitHub Pull Request Updater Action"
+description: "GitHub Action that updates a pull request"
 author: "Arthur Vasconcelos"
+branding:
+  icon: "edit-3"
+  color: "green"
 runs:
-  using: "node12"
+  using: "node16"
   main: "dist/index.js"
 inputs:
   repo-token:
     description: "The GITHUB_TOKEN secret"
     required: true
-  base-branch-regex:
-    description: "Regex to match text in the base branch name"
+  title:
+    description: "Title replacement for the PR"
     required: false
     default: ""
-  head-branch-regex:
-    description: "Regex to match text in the head branch name"
+  title-prefix:
+    description: "Text to be prepended to the PR title"
     required: false
     default: ""
-  lowercase-branch:
-    description: "Should lowercase branch name before matching text"
-    required: false
-    default: "true"
-  title-template:
-    description: "Title template where matched text from branch gets substituted in. Allowed tokens: %basebranch% | %headbranch%"
+  title-suffix:
+    description: "Text to be appended to the PR title"
     required: false
     default: ""
-  title-update-action:
-    description: "Update action to perform on the title. Allowed values: prefix | suffix | replace"
-    required: false
-    default: "prefix"
-  title-insert-space:
-    description: "Should insert a space between title and its prefix or suffix"
-    required: false
-    default: "true"
-  title-uppercase-base-match:
-    description: "Should uppercase matched text from base branch in title"
-    required: false
-    default: "true"
-  title-uppercase-head-match:
-    description: "Should uppercase matched text from head branch in title"
-    required: false
-    default: "true"
-  body-template:
-    description: "Body template where matched text from branch gets substituted in. Allowed tokens: %basebranch% | %headbranch%"
+  body:
+    description: "Body replacement for the PR"
     required: false
     default: ""
-  body-update-action:
-    description: "Update action to perform on the body. Allowed values: prefix | suffix | replace"
+  body-prefix:
+    description: "Text to be prepended to the PR body"
     required: false
-    default: "prefix"
-  body-newline-count:
-    description: "Number of newlines to separate body and its prefix or suffix"
+    default: ""
+  body-suffix:
+    description: "Text to be appended to the PR body"
     required: false
-    default: "2"
-  body-uppercase-base-match:
-    description: "Should uppercase matched text from base branch in body"
-    required: false
-    default: "true"
-  body-uppercase-head-match:
-    description: "Should uppercase matched text from head branch in body"
+    default: ""
+  body-concat-new-line:
+    description: "Flag to indicate whether to add a new line between the body prefix and suffix"
     required: false
     default: "true"
 outputs:
-  baseMatch:
-    description: "Matched text from base branch if any"
-  headMatch:
-    description: "Matched text from head branch if any"
-  titleUpdated:
-    description: "Whether the PR title was updated"
-  bodyUpdated:
-    description: "Whether the PR body was updated"
-branding:
-  icon: "edit-3"
-  color: "green"
+  new-title:
+    description: "New PR title"
+  new-body:
+    description: "New PR body"
