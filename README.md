@@ -1,3 +1,10 @@
+/**
+* TODO: UPDATE CODE AND README
+**/
+
+
+
+
 # Pull Request Updater
 
 ![Update Pull Request](https://github.com/tzkhan/pr-update-action/workflows/Update%20Pull%20Request/badge.svg)
@@ -50,8 +57,6 @@ Create a workflow yaml file (for e.g. `.github/workflows/update-pr.yml`). See [C
 
 ## Example
 
-So the following yaml
-
 ```
 name: "Update Pull Request"
 on: pull_request
@@ -72,11 +77,3 @@ jobs:
         body-update-action: 'suffix'
         body-uppercase-base-match: false
 ```
-
-produces this effect... :point_down:
-
-#### before:
-![pr before](img/pr-before.png)
-
-#### after:
-![pr after](img/pr-after.png)
