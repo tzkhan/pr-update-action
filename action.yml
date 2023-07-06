@@ -2,7 +2,7 @@ name: "GitHub Pull Request Updater Action"
 description: "GitHub Action that updates a pull request"
 author: "Arthur Vasconcelos"
 branding:
-  icon: "edit-3"
+  icon: "git-pull-request"
   color: "green"
 runs:
   using: "node16"
