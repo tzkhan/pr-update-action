@@ -14,7 +14,7 @@ Create a workflow yaml file (for e.g. `.github/workflows/update-pr.yml`). See [C
 ### Inputs
 
 #### Required
-- `repo-token`: secret token to allow making calls to GitHub's rest API (for e.g. `${{ secrets.GITHUB_TOKEN }}`)
+- `token`: secret token to allow making calls to GitHub's rest API (for e.g. `${{ secrets.GITHUB_TOKEN }}`)
 
 #### Optional
 - `title`: Title replacement for the PR
@@ -42,7 +42,7 @@ jobs:
     steps:
     - uses: kognity/pr-update-action
       with:
-        repo-token: "${{ secrets.GITHUB_TOKEN }}"
+        token: "${{ secrets.GITHUB_TOKEN }}"
         title-prefix: "[KOG-9999]"
         body-suffix: |
           My multiline body

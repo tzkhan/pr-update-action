@@ -8,7 +8,7 @@ runs:
   using: "node16"
   main: "dist/index.js"
 inputs:
-  repo-token:
+  token:
     description: "The GITHUB_TOKEN secret"
     required: true
   title:
