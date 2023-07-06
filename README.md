@@ -48,3 +48,5 @@ jobs:
           My multiline body
           Another line
 ```
+
+Scaffolding derived from [typescript-action](https://github.com/actions/typescript-action)
