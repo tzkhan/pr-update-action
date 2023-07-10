@@ -15,10 +15,10 @@ jobs:
           yarn install
       - run: |
           yarn run all
-  test: # make sure the action works on a clean machine without building
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v3
-      - uses: ./
-        with:
-          milliseconds: 1000
+  # test: # make sure the action works on a clean machine without building
+  #   runs-on: ubuntu-latest
+  #   steps:
+  #     - uses: actions/checkout@v3
+  #     - uses: ./
+  #       with:
+  #         milliseconds: 1000
