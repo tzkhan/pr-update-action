@@ -12,38 +12,42 @@ Make sure you set the permissions correctly otherwise the action won't be able t
 
 ### Required
 
-```text
-repo-token                  no default       secret token to allow making calls to GitHub's rest API (for e.g. `${{ secrets.GITHUB_TOKEN }}`)
-```
+| Option | Default | Description | 
+| :-: | :-: | -- |
+|`repo-token`|                  no default|       secret token to allow making calls to GitHub's rest API (for e.g. `${{ secrets.GITHUB_TOKEN }}`)|
+
 
 ### Optional
 
-```text
-RegEx Options
-------------------
-base-branch-regex           no default       regex to match text from the base branch name
-head-branch-regex           no default       regex to match text from the head branch name
 
-Internal Options
-------------------
-lowercase-branch            default: true    whether to make the branch name lowercase internally before matching
+#### RegEx Options
+| Option | Default | Description | 
+| :-: | :-: | -- |
+|`base-branch-regex`   |        no default    |   regex to match text from the _base_ branch name|
+|`head-branch-regex`   |        no default    |   regex to match text from the **head** branch name|
 
-Title Options
-------------------
-title-template              no default       text to insert into/replace the title with. You can use whatever text you like, including any GitHub supported markdown, along with the following tokens: `%basebranch%` | `%headbranch%`
-title-update-action         default: prefix  whether to prefix, suffix or replace title with the `title-template`
-title-insert-space          default: true    whether to insert a space between title and its prefix or suffix
-title-uppercase-base-match  default: true    whether to make the matched text from the base branch uppercase in the title
-title-uppercase-head-match  default: true    whether to make the matched text from the head branch uppercase in the title
+#### Internal Options
+| Option | Default | Description | 
+| :-: | :-: | -- |
+|`lowercase-branch`    |        default: true  |  whether to make the branch name lowercase internally before matching|
 
-Body Options
-------------------
-body-template               no default       text to insert into/replace the body with. You can use whatever text you like, including any GitHub supported markdown, along with the following tokens: `%basebranch%` | `%headbranch%`
-body-update-action          default: prefix  whether to prefix, suffix or replace body with `body-template`
-body-newline-count          default: 2       number of newlines to separate the body and its prefix or suffix
-body-uppercase-base-match   default: true    whether to make the matched text from the base branch uppercase in the body
-body-uppercase-head-match   default: true    whether to make the matched text from the head branch uppercase in the body
-```
+#### Title Options
+| Option | Default | Description | 
+| :-: | :-: | -- |
+|`title-template`        |      no default  |     text to insert into/replace the title with. You can use whatever text you like, including any GitHub supported markdown, along with the following tokens: `%basebranch%` / `%headbranch%`|
+|`title-update-action`    |     default: prefix | whether to prefix, suffix or replace title with the `title-template`|
+|`title-insert-space`    |      default: true  |  whether to insert a space between title and its prefix or suffix|
+|`title-uppercase-base-match` | default: true  |  whether to make the matched text from the _base_ branch uppercase in the title|
+|`title-uppercase-head-match` | default: true |   whether to make the matched text from the **head** branch uppercase in the title|
+
+#### Body Options
+| Option | Default | Description | 
+| :-: | :-: | -- |
+|`body-template` |              no default    |   text to insert into/replace the body with. You can use whatever text you like, including any GitHub supported markdown, along with the following tokens: `%basebranch%` | `%headbranch%`|
+|`body-update-action`   |       default: prefix | whether to prefix, suffix or replace body with `body-template`|
+|`body-newline-count`   |       default: 2      | number of newlines to separate the body and its prefix or suffix|
+|`body-uppercase-base-match` |  default: true  |  whether to make the matched text from the _base_ branch uppercase in the body
+|`body-uppercase-head-match`  | default: true  |  whether to make the matched text from the **head** branch uppercase in the body|
 
 ## Notes
 
