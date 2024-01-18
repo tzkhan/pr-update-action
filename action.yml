@@ -2,7 +2,7 @@ name: "Pull Request Updater GitHub Action"
 description: "GitHub Action that updates a pull request with information extracted from branch name"
 author: "Tamim Khan"
 runs:
-  using: "node12"
+  using: "node16"
   main: "dist/index.js"
 inputs:
   repo-token:
